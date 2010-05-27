@@ -1,0 +1,16 @@
+<!doctype HTML>
+<html>
+    <head>
+        <title>Magic Mirror</title>
+    </head>
+    <body>
+        <div class='main_button'>
+            <a href='/question.add'>Ask</a>
+        </div>
+        <div class='count'>
+            <p>
+                123 magic mirrors answered for 10 questions today.
+            </p>
+        </div>
+    </body>
+</html>

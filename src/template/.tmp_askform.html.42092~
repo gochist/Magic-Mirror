@@ -1,0 +1,15 @@
+<form>
+    <div>
+        Q<input>
+        </input>
+    </div>
+    <div>
+        Options
+        <textarea>
+        </textarea>
+    </div>
+    <div>
+        <input type="submit">
+        </input>
+    </div>
+</form>

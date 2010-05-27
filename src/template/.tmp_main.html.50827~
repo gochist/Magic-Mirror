@@ -1,0 +1,30 @@
+<!doctype HTML>
+<html>
+    <head>
+        <title>Magic Mirror</title>
+    </head>
+    <body>
+        <div class='count'>
+            <p>
+                123 magic mirrors answered for 10 questions today.
+            </p>
+        </div>
+        <div class='ask_form_layer'>
+            <form method="post" action="/question.post">
+                <div>
+                    Q<input>
+                    </input>
+                </div>
+                <div>
+                    Options
+                    <textarea>
+                    </textarea>
+                </div>
+                <div>
+                    <input type="submit">
+                    </input>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>
