@@ -5,12 +5,11 @@
     </head>
     <body>
         <div class='list_layer'>
+            {% for question in questions %}
             <p>
-                {{q}}
+                {{ question.text }}
             </p>
-            <li>
-                {{o}}
-            </li>
+            {% endfor %}
         </div>
         <div class='count_layer'>
             <p>

@@ -10,7 +10,9 @@ tpl_path = "template"
 
 class MainHandler(webapp.RequestHandler):
     def get(self):
+        query = QuestionModel.all().order('text')
         template_dict = {}
+        template_dict['questions'] = query.fetch(10)
         ret = template.render(os.path.join(tpl_path, 'main.html'),
                               template_dict)
         self.response.out.write(ret)
@@ -23,8 +25,8 @@ class QuestionHandler(webapp.RequestHandler):
             q_model = QuestionModel(text=question)
             q_model.put()
             for option in options.strip().splitlines():
-                o_model = OptionModel(question_ref = q_model,
-                                      text = option)
+                o_model = OptionModel(question_ref=q_model,
+                                      text=option)
                 o_model.put()
             
         except Exception:
@@ -35,7 +37,7 @@ class QuestionHandler(webapp.RequestHandler):
 
 
 def main():
-    url_mapping = [('/', MainHandler), 
+    url_mapping = [('/', MainHandler),
                    ('/question.post', QuestionHandler)]
     application = webapp.WSGIApplication(url_mapping, debug=True)
     run_wsgi_app(application)
