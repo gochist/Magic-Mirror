@@ -6,18 +6,20 @@
     <body>
         <div class='count'>
             <p>
-                123 magic mirrors answered for 10 questions today.
+                {{ m_count }} magic mirrors answered for {{ q_count }} questions today.
             </p>
         </div>
         <div class='ask_form_layer'>
             <form method="post" action="/question.post">
                 <div>
-                    Q<input>
+                    Q<input name='question'>
                     </input>
                 </div>
                 <div>
                     Options
-                    <textarea>
+                    <textarea name='options'>
+                        yes
+                        no
                     </textarea>
                 </div>
                 <div>

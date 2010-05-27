@@ -1,23 +1,31 @@
-from google.appengine.api import users
+#from google.appengine.api import users
 from google.appengine.ext import webapp
+from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
 
+import os
 
-class MainPage(webapp.RequestHandler):
+tpl_path = "template"
+
+class MainHandler(webapp.RequestHandler):
     def get(self):
-        user = users.get_current_user()
-        if user:
-            self.response.out.write(
-                '<img src="static/app_engine_logo_sm.gif"></img>' +
-                'Hello %s <a href="%s">Sign out</a><br>Is administrator: %s' % 
-                (user.nickname(), 
-                 users.create_logout_url("/"), 
-                 users.is_current_user_admin())
-            )
-        else:
-            self.redirect(users.create_login_url(self.request.uri))
+        template_dict = {}
+        ret = template.render(os.path.join(tpl_path, 'main.html'),
+                              template_dict)
+        self.response.out.write(ret)
+            
+class QuestionHandler(webapp.RequestHandler):
+    def post(self):
+        question = self.request.get('question')
+        options = self.request.get('options')
+        self.response.out.write(question)      
+        self.response.out.write(options)
 
-application = webapp.WSGIApplication([('/', MainPage)], debug=True)
+
+url_mapping = [('/', MainHandler), 
+               ('/question.post', QuestionHandler)]
+
+application = webapp.WSGIApplication(url_mapping, debug=True)
 
 def main():
     run_wsgi_app(application)
