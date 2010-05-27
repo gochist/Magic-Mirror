@@ -3,6 +3,7 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
 
+from models import QuestionModel, OptionModel
 import os
 
 tpl_path = "template"
@@ -18,16 +19,25 @@ class QuestionHandler(webapp.RequestHandler):
     def post(self):
         question = self.request.get('question')
         options = self.request.get('options')
-        self.response.out.write(question)      
-        self.response.out.write(options)
+        try:
+            q_model = QuestionModel(text=question)
+            q_model.put()
+            for option in options.strip().splitlines():
+                o_model = OptionModel(question_ref = q_model,
+                                      text = option)
+                o_model.put()
+            
+        except Exception:
+            return
+               
+        self.redirect('/')
 
 
-url_mapping = [('/', MainHandler), 
-               ('/question.post', QuestionHandler)]
-
-application = webapp.WSGIApplication(url_mapping, debug=True)
 
 def main():
+    url_mapping = [('/', MainHandler), 
+                   ('/question.post', QuestionHandler)]
+    application = webapp.WSGIApplication(url_mapping, debug=True)
     run_wsgi_app(application)
 
 if __name__ == "__main__":
