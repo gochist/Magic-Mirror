@@ -18,8 +18,14 @@ class MainHandler(webapp.RequestHandler):
         self.response.out.write(ret)
             
 class QuestionHandler(webapp.RequestHandler):
-    def get(self, question_id):
+    def get(self, q_key):
         template_dict = {}
+        question = QuestionModel.get(q_key)
+        query = OptionModel.all()
+        query.filter("question_ref = ", question)
+        
+        template_dict['options'] = query.fetch(10)
+        template_dict['question'] = question
         ret = template.render(os.path.join(tpl_path, 'question.html'), template_dict)
         self.response.out.write(ret)
     
