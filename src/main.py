@@ -18,6 +18,11 @@ class MainHandler(webapp.RequestHandler):
         self.response.out.write(ret)
             
 class QuestionHandler(webapp.RequestHandler):
+    def get(self, question_id):
+        template_dict = {}
+        ret = template.render(os.path.join(tpl_path, 'question.html'), template_dict)
+        self.response.out.write(ret)
+    
     def post(self):
         question = self.request.get('question')
         options = self.request.get('options')
@@ -38,7 +43,9 @@ class QuestionHandler(webapp.RequestHandler):
 
 def main():
     url_mapping = [('/', MainHandler),
-                   ('/question.post', QuestionHandler)]
+                   ('/question.post', QuestionHandler),
+                   ('/question/(.*)', QuestionHandler),
+                   ]
     application = webapp.WSGIApplication(url_mapping, debug=True)
     run_wsgi_app(application)
 

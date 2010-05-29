@@ -8,7 +8,7 @@
             {% for question in questions %}
             <ol>
                 <p>
-                    {{ question.text }}
+                    <a href='/question/{{question.key}}'>{{ question.text }}</a>
                 </p>
             </ol>
             {% endfor %}
