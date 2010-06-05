@@ -5,7 +5,7 @@ from handlers import MainHandler, QuestionHandler
 
 def main():
     url_mapping = [('/', MainHandler),
-                   ('/question.post', QuestionHandler),
+                   ('/question', QuestionHandler),
                    ('/question/(.*)', QuestionHandler),
                    ]
     application = webapp.WSGIApplication(url_mapping, debug=True)

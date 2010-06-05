@@ -6,6 +6,10 @@ class QuestionModel(db.Model):
 class OptionModel(db.Model):
     question_ref = db.ReferenceProperty(QuestionModel)
     text = db.StringProperty(required=True)
+    
+class UserModel(db.Model):
+    user_id = db.StringProperty(required=True)
+    
 
    
 #    order = db.IntegerProperty(required=True)
