@@ -1,6 +1,7 @@
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import login_required
+from google.appengine.api import urlfetch
 from models import QuestionModel, OptionModel
 
 import os
@@ -8,7 +9,17 @@ import config
 
 class AuthHandler(webapp.RequestHandler):
     def get(self, service, mode):
-        self.response.out.write("not implemented yet")
+        if service == 'twitter':
+            if mode =='signin':
+                url = 'https://twitter.com/oauth/request_token'
+                param = {'service' : 'twitter',
+                         'service_info'
+                         }
+                result = urlfetch.fetch(url)
+                config.twit_app_key
+                self.response.out.write("not implemented yet %s %s" % (service, mode))
+        
+        
 
 class MainHandler(webapp.RequestHandler):
     def get(self):
