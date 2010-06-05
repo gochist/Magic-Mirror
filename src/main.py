@@ -5,15 +5,14 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 
 from models import QuestionModel, OptionModel
 import os
-
-tpl_path = "template"
+import config
 
 class MainHandler(webapp.RequestHandler):
     def get(self):
         query = QuestionModel.all().order('text')
         template_dict = {}
         template_dict['questions'] = query.fetch(10)
-        ret = template.render(os.path.join(tpl_path, 'main.html'),
+        ret = template.render(os.path.join(config.tpl_path, 'main.html'),
                               template_dict)
         self.response.out.write(ret)
             
@@ -26,7 +25,7 @@ class QuestionHandler(webapp.RequestHandler):
         
         template_dict['options'] = query.fetch(10)
         template_dict['question'] = question
-        ret = template.render(os.path.join(tpl_path, 'question.html'), template_dict)
+        ret = template.render(os.path.join(config.tpl_path, 'question.html'), template_dict)
         self.response.out.write(ret)
     
     def post(self):
