@@ -6,18 +6,21 @@ from models import QuestionModel, OptionModel
 
 import os
 import config
+import oauth2 as oauth
 
 class AuthHandler(webapp.RequestHandler):
     def get(self, service, mode):
         if service == 'twitter':
-            if mode =='signin':
-                url = 'https://twitter.com/oauth/request_token'
-                param = {'service' : 'twitter',
-                         'service_info'
-                         }
-                result = urlfetch.fetch(url)
-                config.twit_app_key
-                self.response.out.write("not implemented yet %s %s" % (service, mode))
+            if mode == 'signin':
+                consumer = oauth.Consumer(key=config.twit_app_key,
+                                          secret=config.twit_app_secret)
+                client = oauth.Client(consumer)
+                resp, content = client.request('https://api.twitter.com/oauth/request_token', 'GET')
+                self.response.out.write(content)
+                self.response.out.write(resp)
+                
+                
+#                self.redirect('http')
         
         
 
