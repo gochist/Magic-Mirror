@@ -1,0 +1,9 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>Magic Mirror</title>
+    </head>
+    <body>
+        {{contents}}
+    </body>
+</html>

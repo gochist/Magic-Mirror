@@ -1,13 +1,18 @@
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
+from google.appengine.ext.webapp.util import login_required
 from models import QuestionModel, OptionModel
-import os
 
+import os
 import config
+
+class AuthHandler(webapp.RequestHandler):
+    def get(self, service, mode):
+        self.response.out.write("not implemented yet")
 
 class MainHandler(webapp.RequestHandler):
     def get(self):
-        query = QuestionModel.all().order('text')
+        query = QuestionModel.all().order('created_time')
         template_dict = {}
         template_dict['questions'] = query.fetch(10)
         ret = template.render(os.path.join(config.tpl_path, 'main.html'),
@@ -15,6 +20,7 @@ class MainHandler(webapp.RequestHandler):
         self.response.out.write(ret)
             
 class QuestionHandler(webapp.RequestHandler):
+    @login_required
     def get(self, q_key):
         template_dict = {}
         question = QuestionModel.get(q_key)
@@ -25,7 +31,7 @@ class QuestionHandler(webapp.RequestHandler):
         template_dict['question'] = question
         ret = template.render(os.path.join(config.tpl_path, 'question.html'), template_dict)
         self.response.out.write(ret)
-    
+
     def post(self):
         question = self.request.get('question')
         options = self.request.get('options')

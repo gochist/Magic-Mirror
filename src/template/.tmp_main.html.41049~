@@ -4,16 +4,11 @@
         <title>Magic Mirror</title>
     </head>
     <body>
-        <div class='sign_in_layer'>
-            {% if user %}<a href='/auth/twitter/signout'>sign out</a>
-            {% else %}<a href='/auth/twitter/signin'>sign in with twitter</a>
-            {% endif %}
-        </div>
         <div class='list_layer'>
             {% for question in questions %}
             <ol>
                 <p>
-                    {{ question.created_time }}<a href='/question/{{question.key}}'>{{ question.text }}</a>
+                    <a href='/question/{{question.key}}'>{{ question.text }}</a>
                 </p>
             </ol>
             {% endfor %}
@@ -23,8 +18,6 @@
                 {{ m_count }} magic mirrors answered for {{ q_count }} questions today.
             </p>
         </div>
-		
-        {% if user %}
         <div class='ask_form_layer'>
             <form method="post" action="/question">
                 <div>
@@ -44,6 +37,5 @@
                 </div>
             </form>
         </div>
-		{% endif %}
     </body>
 </html>

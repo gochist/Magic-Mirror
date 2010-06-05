@@ -5,8 +5,8 @@
     </head>
     <body>
         <div class='sign_in_layer'>
-            {% if user %}<a href='/auth/twitter/signout'>sign out</a>
-            {% else %}<a href='/auth/twitter/signin'>sign in with twitter</a>
+            {% if user %}<a href='/auth/signin'>sign in</a>
+            {% else %}<a href='/auth/signout'>sign out</a>
             {% endif %}
         </div>
         <div class='list_layer'>
@@ -23,8 +23,6 @@
                 {{ m_count }} magic mirrors answered for {{ q_count }} questions today.
             </p>
         </div>
-		
-        {% if user %}
         <div class='ask_form_layer'>
             <form method="post" action="/question">
                 <div>
@@ -44,6 +42,5 @@
                 </div>
             </form>
         </div>
-		{% endif %}
     </body>
 </html>
