@@ -7,8 +7,7 @@
         <div class='sign_in_layer'>
             {% if user %}<a href='/oauth/twitter/logout'>sign out</a>
             user:{{user}}
-            {% else %}<a href='/oauth/twitter/login'>sign in with twitter</a>
-            {% endif %}
+            {% else %}<a href='/oauth/twitter/login'><img src='/static/img/sign-in-with-twitter.png'></a> {% endif %}
         </div>
         <div class='list_layer'>
             {% for question in questions %}
@@ -27,7 +26,7 @@
         {% if user %}
         <div class='ask_form_layer'>
             <form method="post" action="/question">
-            	<img src="{{profile_image_url}}"/>
+                <img src="{{profile_image_url}}"/>
                 <div>
                     Q<input name='question'>
                     </input>
