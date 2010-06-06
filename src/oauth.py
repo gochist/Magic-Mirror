@@ -36,7 +36,7 @@ from wsgiref.handlers import CGIHandler
 sys.path.insert(0, join_path(dirname(__file__), 'lib')) # extend sys.path
 
 from demjson import decode as decode_json
-import config
+from config import OAUTH_APP_SETTINGS
 
 from google.appengine.api.urlfetch import fetch as urlfetch, GET, POST
 from google.appengine.ext import db
@@ -46,34 +46,7 @@ from google.appengine.ext.webapp import RequestHandler, WSGIApplication
 # configuration -- SET THESE TO SUIT YOUR APP!!
 # ------------------------------------------------------------------------------
 
-OAUTH_APP_SETTINGS = {
 
-    'twitter': {
-
-        'consumer_key': config.twit_app_key,
-        'consumer_secret': config.twit_app_secret,
-
-        'request_token_url': 'https://twitter.com/oauth/request_token',
-        'access_token_url': 'https://twitter.com/oauth/access_token',
-        'user_auth_url': 'http://twitter.com/oauth/authorize',
-
-        'default_api_prefix': 'http://twitter.com',
-        'default_api_suffix': '.json',
-
-        },
-
-    'google': {
-
-        'consumer_key': '',
-        'consumer_secret': '',
-
-        'request_token_url': 'https://www.google.com/accounts/OAuthGetRequestToken',
-        'access_token_url': 'https://www.google.com/accounts/OAuthGetAccessToken',
-        'user_auth_url': 'https://www.google.com/accounts/OAuthAuthorizeToken',
-
-        },
-
-    }
 
 CLEANUP_BATCH_SIZE = 100
 EXPIRATION_WINDOW = timedelta(seconds=60 * 60 * 1) # 1 hour
@@ -253,7 +226,10 @@ class OAuthClient(object):
             old = OAuthAccessToken.all().filter(
                 'specifier =', specifier).filter(
                 'service =', self.service)
-            db.delete(old)
+            try :
+                db.delete(old)
+            except Exception:
+                pass
 
         self.token.put()
         self.set_cookie(key_name)
@@ -333,11 +309,6 @@ class OAuthClient(object):
             ('oauth.%s' % self.service, path)
             )
 
-# ------------------------------------------------------------------------------
-# oauth handler
-# ------------------------------------------------------------------------------
-
-
 
 # ------------------------------------------------------------------------------
 # modify this demo MainHandler to suit your needs
@@ -353,12 +324,9 @@ FOOTER = "</body></html>"
 
 class MainHandler(RequestHandler):
     """Demo Twitter App."""
-
     def get(self):
-
         client = OAuthClient('twitter', self)
-        gdata = OAuthClient('google', self, scope='http://www.google.com/calendar/feeds')
-
+#        gdata = OAuthClient('google', self, scope='http://www.google.com/calendar/feeds')
         write = self.response.out.write; write(HEADER)
 
         if not client.get_cookie():
@@ -367,30 +335,9 @@ class MainHandler(RequestHandler):
             return
 
         write('<a href="/oauth/twitter/logout">Logout from Twitter</a><br /><br />')
-
         info = client.get('/account/verify_credentials')
-
         write("<strong>Screen Name:</strong> %s<br />" % info['screen_name'])
         write("<strong>Location:</strong> %s<br />" % info['location'])
-
         rate_info = client.get('/account/rate_limit_status')
-
         write("<strong>API Rate Limit Status:</strong> %r" % rate_info)
-
         write(FOOTER)
-
-# ------------------------------------------------------------------------------
-# self runner -- gae cached main() function
-# ------------------------------------------------------------------------------
-
-def main():
-
-    application = WSGIApplication([
-       ('/oauth/(.*)/(.*)', OAuthHandler),
-       ('/', MainHandler)
-       ], debug=True)
-
-    CGIHandler().run(application)
-
-if __name__ == '__main__':
-    main()

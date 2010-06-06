@@ -8,9 +8,17 @@ from oauth import *
 
 class MainHandler(webapp.RequestHandler):
     def get(self):
+        client = OAuthClient('twitter', self)
+        
         query = QuestionModel.all().order('created_time')
-        template_dict = {}
+        template_dict = {}        
+        template_dict['user'] = client.get_cookie()                
         template_dict['questions'] = query.fetch(10)
+        
+        if template_dict['user']:
+            info = client.get('/account/verify_credentials')
+            template_dict['profile_image_url'] = info['profile_image_url']
+        
         ret = template.render(os.path.join(config.tpl_path, 'main.html'),
                               template_dict)
         self.response.out.write(ret)
@@ -46,16 +54,13 @@ class QuestionHandler(webapp.RequestHandler):
         
 
 class OAuthHandler(webapp.RequestHandler):
-
     def get(self, service, action=''):
-
-        if service not in OAUTH_APP_SETTINGS:
+        if service not in config.OAUTH_APP_SETTINGS:
             return self.response.out.write(
                 "Unknown OAuth Service Provider: %r" % service
                 )
 
         client = OAuthClient(service, self)
-
         if action in client.__public__:
             self.response.out.write(getattr(client, action)())
         else:

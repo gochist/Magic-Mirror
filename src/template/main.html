@@ -5,8 +5,9 @@
     </head>
     <body>
         <div class='sign_in_layer'>
-            {% if user %}<a href='/auth/twitter/signout'>sign out</a>
-            {% else %}<a href='/auth/twitter/signin'>sign in with twitter</a>
+            {% if user %}<a href='/oauth/twitter/logout'>sign out</a>
+            user:{{user}}
+            {% else %}<a href='/oauth/twitter/login'>sign in with twitter</a>
             {% endif %}
         </div>
         <div class='list_layer'>
@@ -23,10 +24,10 @@
                 {{ m_count }} magic mirrors answered for {{ q_count }} questions today.
             </p>
         </div>
-		
         {% if user %}
         <div class='ask_form_layer'>
             <form method="post" action="/question">
+            	<img src="{{profile_image_url}}"/>
                 <div>
                     Q<input name='question'>
                     </input>
@@ -43,7 +44,6 @@
                     </input>
                 </div>
             </form>
-        </div>
-		{% endif %}
+        </div>{% endif %}
     </body>
 </html>
