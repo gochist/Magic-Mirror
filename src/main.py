@@ -1,11 +1,11 @@
 #from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
-from handlers import MainHandler, QuestionHandler, AuthHandler
+from handlers import MainHandler, QuestionHandler, OAuthHandler
 
 def main():
     url_mapping = [('/', MainHandler),
-                   ('/auth/(.*)/(.*)', AuthHandler),
+                   ('/oauth/(.*)/(.*)', OAuthHandler),
                    ('/question', QuestionHandler),
                    ('/question/(.*)', QuestionHandler),
                    ]

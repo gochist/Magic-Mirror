@@ -1,28 +1,10 @@
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import login_required
-from google.appengine.api import urlfetch
 from models import QuestionModel, OptionModel
+import config, os
+from oauth import *
 
-import os
-import config
-import oauth2 as oauth
-
-class AuthHandler(webapp.RequestHandler):
-    def get(self, service, mode):
-        if service == 'twitter':
-            if mode == 'signin':
-                consumer = oauth.Consumer(key=config.twit_app_key,
-                                          secret=config.twit_app_secret)
-                client = oauth.Client(consumer)
-                resp, content = client.request('https://api.twitter.com/oauth/request_token', 'GET')
-                self.response.out.write(content)
-                self.response.out.write(resp)
-                
-                
-#                self.redirect('http')
-        
-        
 
 class MainHandler(webapp.RequestHandler):
     def get(self):
@@ -61,4 +43,20 @@ class QuestionHandler(webapp.RequestHandler):
             return
                
         self.redirect('/')
+        
 
+class OAuthHandler(webapp.RequestHandler):
+
+    def get(self, service, action=''):
+
+        if service not in OAUTH_APP_SETTINGS:
+            return self.response.out.write(
+                "Unknown OAuth Service Provider: %r" % service
+                )
+
+        client = OAuthClient(service, self)
+
+        if action in client.__public__:
+            self.response.out.write(getattr(client, action)())
+        else:
+            self.response.out.write(client.login())        
