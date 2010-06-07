@@ -18,7 +18,9 @@ class MainHandler(webapp.RequestHandler):
         
         if template_dict['user']:
             info = client.get('/account/verify_credentials')
+            info2 = client.get('/statuses/user_timeline')
             template_dict['profile_image_url'] = info['profile_image_url']
+            template_dict['info2'] = str(info2)
         
         ret = template.render(os.path.join(config.tpl_path, 'main.html'),
                               template_dict)
@@ -47,10 +49,13 @@ class QuestionHandler(webapp.RequestHandler):
                 o_model = OptionModel(question_ref=q_model,
                                       text=option)
                 o_model.put()
-            
+
         except Exception:
             return
                
+        client = OAuthClient('twitter', self)
+        client.post(api_method='/statuses/update', status=question)
+            
         self.redirect('/')
         
 
