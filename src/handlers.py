@@ -1,9 +1,10 @@
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
-from google.appengine.ext.webapp.util import login_required
+#from google.appengine.ext.webapp.util import login_required
 from models import QuestionModel, OptionModel
 import config, os
-from oauth import *
+from oauth import OAuthClient
+from util import twit_login_required
 
 
 class MainHandler(webapp.RequestHandler):
@@ -24,7 +25,7 @@ class MainHandler(webapp.RequestHandler):
         self.response.out.write(ret)
             
 class QuestionHandler(webapp.RequestHandler):
-    @login_required
+    @twit_login_required
     def get(self, q_key):
         template_dict = {}
         question = QuestionModel.get(q_key)

@@ -31,33 +31,26 @@ from random import getrandbits
 from time import time
 from urllib import urlencode, quote as urlquote
 from uuid import uuid4
-from wsgiref.handlers import CGIHandler
 
 sys.path.insert(0, join_path(dirname(__file__), 'lib')) # extend sys.path
 
 from demjson import decode as decode_json
-from config import OAUTH_APP_SETTINGS
 
-from google.appengine.api.urlfetch import fetch as urlfetch, GET, POST
+from google.appengine.api.urlfetch import fetch as urlfetch
 from google.appengine.ext import db
-from google.appengine.ext.webapp import RequestHandler, WSGIApplication
 
+from config import OAUTH_APP_SETTINGS
+from models import OAuthAccessToken, OAuthRequestToken
 # ------------------------------------------------------------------------------
 # configuration -- SET THESE TO SUIT YOUR APP!!
 # ------------------------------------------------------------------------------
-
-
-
 CLEANUP_BATCH_SIZE = 100
 EXPIRATION_WINDOW = timedelta(seconds=60 * 60 * 1) # 1 hour
-
-
 STATIC_OAUTH_TIMESTAMP = 12345 # a workaround for clock skew/network lag
 
 # ------------------------------------------------------------------------------
 # utility functions
 # ------------------------------------------------------------------------------
-
 def get_service_key(service, cache={}):
     if service in cache: return cache[service]
     return cache.setdefault(
@@ -76,34 +69,10 @@ def twitter_specifier_handler(client):
 OAUTH_APP_SETTINGS['twitter']['specifier_handler'] = twitter_specifier_handler
 
 # ------------------------------------------------------------------------------
-# db entities
-# ------------------------------------------------------------------------------
-
-class OAuthRequestToken(db.Model):
-    """OAuth Request Token."""
-
-    service = db.StringProperty()
-    oauth_token = db.StringProperty()
-    oauth_token_secret = db.StringProperty()
-    created = db.DateTimeProperty(auto_now_add=True)
-
-class OAuthAccessToken(db.Model):
-    """OAuth Access Token."""
-
-    service = db.StringProperty()
-    specifier = db.StringProperty()
-    oauth_token = db.StringProperty()
-    oauth_token_secret = db.StringProperty()
-    created = db.DateTimeProperty(auto_now_add=True)
-
-# ------------------------------------------------------------------------------
 # oauth client
 # ------------------------------------------------------------------------------
-
 class OAuthClient(object):
-
     __public__ = ('callback', 'cleanup', 'login', 'logout')
-
     def __init__(self, service, handler, oauth_callback=None, **request_params):
         self.service = service
         self.service_info = OAUTH_APP_SETTINGS[service]
@@ -114,7 +83,6 @@ class OAuthClient(object):
         self.token = None
 
     # public methods
-
     def get(self, api_method, http_method='GET', expected_status=(200,), **extra_params):
 
         if not (api_method.startswith('http://') or api_method.startswith('https://')):
@@ -139,7 +107,6 @@ class OAuthClient(object):
         return decode_json(fetch.content)
 
     def post(self, api_method, http_method='POST', expected_status=(200,), **extra_params):
-
         if not (api_method.startswith('http://') or api_method.startswith('https://')):
             api_method = '%s%s%s' % (
                 self.service_info['default_api_prefix'], api_method,
@@ -162,13 +129,10 @@ class OAuthClient(object):
         return decode_json(fetch.content)
 
     def login(self):
-
         proxy_id = self.get_cookie()
-
         if proxy_id:
             return "FOO%rFF" % proxy_id
             self.expire_cookie()
-
         return self.get_request_token()
 
     def logout(self, return_to='/'):
@@ -176,28 +140,22 @@ class OAuthClient(object):
         self.handler.redirect(self.handler.request.get("return_to", return_to))
 
     # oauth workflow
-
     def get_request_token(self):
-
         token_info = self.get_data_from_signed_url(
             self.service_info['request_token_url'], **self.request_params
             )
-
         token = OAuthRequestToken(
             service=self.service,
             **dict(token.split('=') for token in token_info.split('&'))
             )
-
         token.put()
-
         if self.oauth_callback:
             oauth_callback = {'oauth_callback': self.oauth_callback}
         else:
             oauth_callback = {}
-
-        self.handler.redirect(self.get_signed_url(
-            self.service_info['user_auth_url'], token, **oauth_callback
-            ))
+        self.handler.redirect(self.get_signed_url(self.service_info['user_auth_url'],
+                                                  token,
+                                                  **oauth_callback))
 
     def callback(self, return_to='/'):
 
@@ -240,7 +198,10 @@ class OAuthClient(object):
             'created <', datetime.now() - EXPIRATION_WINDOW
             )
         count = query.count(CLEANUP_BATCH_SIZE)
-        db.delete(query.fetch(CLEANUP_BATCH_SIZE))
+        try:
+            db.delete(query.fetch(CLEANUP_BATCH_SIZE))
+        except Exception:
+            pass
         return "Cleaned %i entries" % count
 
     # request marshalling
@@ -309,35 +270,3 @@ class OAuthClient(object):
             ('oauth.%s' % self.service, path)
             )
 
-
-# ------------------------------------------------------------------------------
-# modify this demo MainHandler to suit your needs
-# ------------------------------------------------------------------------------
-
-HEADER = """
-  <html><head><title>Twitter OAuth Demo</title>
-  </head><body>
-  <h1>Twitter OAuth Demo App</h1>
-  """
-
-FOOTER = "</body></html>"
-
-class MainHandler(RequestHandler):
-    """Demo Twitter App."""
-    def get(self):
-        client = OAuthClient('twitter', self)
-#        gdata = OAuthClient('google', self, scope='http://www.google.com/calendar/feeds')
-        write = self.response.out.write; write(HEADER)
-
-        if not client.get_cookie():
-            write('<a href="/oauth/twitter/login">Login via Twitter</a>')
-            write(FOOTER)
-            return
-
-        write('<a href="/oauth/twitter/logout">Logout from Twitter</a><br /><br />')
-        info = client.get('/account/verify_credentials')
-        write("<strong>Screen Name:</strong> %s<br />" % info['screen_name'])
-        write("<strong>Location:</strong> %s<br />" % info['location'])
-        rate_info = client.get('/account/rate_limit_status')
-        write("<strong>API Rate Limit Status:</strong> %r" % rate_info)
-        write(FOOTER)
