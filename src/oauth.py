@@ -21,9 +21,10 @@ I hope you find this useful, tav
 
 # Released into the Public Domain by tav@espians.com
 
+
 import sys
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from hashlib import sha1
 from hmac import new as hmac
 from os.path import dirname, join as join_path
@@ -39,14 +40,11 @@ from demjson import decode as decode_json
 from google.appengine.api.urlfetch import fetch as urlfetch
 from google.appengine.ext import db
 
-from config import OAUTH_APP_SETTINGS
+from config import OAUTH_APP_SETTINGS, CLEANUP_BATCH_SIZE, EXPIRATION_WINDOW
 from models import OAuthAccessToken, OAuthRequestToken
 # ------------------------------------------------------------------------------
 # configuration -- SET THESE TO SUIT YOUR APP!!
 # ------------------------------------------------------------------------------
-CLEANUP_BATCH_SIZE = 100
-EXPIRATION_WINDOW = timedelta(seconds=60 * 60 * 1) # 1 hour
-STATIC_OAUTH_TIMESTAMP = 12345 # a workaround for clock skew/network lag
 
 # ------------------------------------------------------------------------------
 # utility functions
@@ -172,7 +170,7 @@ class OAuthClient(object):
             self.service_info['access_token_url'], oauth_token
             )
 
-        key_name = create_uuid()
+        key_name = create_uuid()EXPIRATION_WINDOW
 
         self.token = OAuthAccessToken(
             key_name=key_name, service=self.service,

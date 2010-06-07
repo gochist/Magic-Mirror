@@ -1,8 +1,6 @@
-tpl_path = "template"
+from datetime import timedelta
 
-twit_request_token_url = "http://twitter.com/oauth/request_token"
-twit_access_token_url = "http://twitter.com/oauth/access_token"
-twit_authorize_url = "http://twitter.com/oauth/authorize"
+tpl_path = "template"
 
 OAUTH_APP_SETTINGS = {
     'twitter': {
@@ -22,3 +20,7 @@ OAUTH_APP_SETTINGS = {
         'user_auth_url': 'https://www.google.com/accounts/OAuthAuthorizeToken',
     }
 }
+
+CLEANUP_BATCH_SIZE = 100
+EXPIRATION_WINDOW = timedelta(seconds=60 * 60 * 1) # 1 hour
+STATIC_OAUTH_TIMESTAMP = 12345 # a workaround for clock skew/network lag
