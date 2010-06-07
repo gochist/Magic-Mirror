@@ -170,7 +170,7 @@ class OAuthClient(object):
             self.service_info['access_token_url'], oauth_token
             )
 
-        key_name = create_uuid()EXPIRATION_WINDOW
+        key_name = create_uuid()
 
         self.token = OAuthAccessToken(
             key_name=key_name, service=self.service,
