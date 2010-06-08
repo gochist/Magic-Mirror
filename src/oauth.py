@@ -42,9 +42,6 @@ from google.appengine.ext import db
 
 from config import OAUTH_APP_SETTINGS, CLEANUP_BATCH_SIZE, EXPIRATION_WINDOW
 from models import OAuthAccessToken, OAuthRequestToken
-# ------------------------------------------------------------------------------
-# configuration -- SET THESE TO SUIT YOUR APP!!
-# ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
 # utility functions
@@ -82,20 +79,17 @@ class OAuthClient(object):
 
     # public methods
     def get(self, api_method, http_method='GET', expected_status=(200,), **extra_params):
-
         if not (api_method.startswith('http://') or api_method.startswith('https://')):
             api_method = '%s%s%s' % (
                 self.service_info['default_api_prefix'], api_method,
                 self.service_info['default_api_suffix']
                 )
-
         if self.token is None:
             self.token = OAuthAccessToken.get_by_key_name(self.get_cookie())
-
-        fetch = urlfetch(self.get_signed_url(
-            api_method, self.token, http_method, **extra_params
-            ))
-
+            
+        signed_url = self.get_signed_url(api_method, self.token, http_method, 
+                                         **extra_params)
+        fetch = urlfetch(signed_url)
         if fetch.status_code not in expected_status:
             raise ValueError(
                 "Error calling... Got return status: %i [%r]" % 
@@ -203,19 +197,17 @@ class OAuthClient(object):
         return "Cleaned %i entries" % count
 
     # request marshalling
+    def get_data_from_signed_url(self, url, token=None, method='GET', 
+                                 **extra_params):
+        signed_url = self.get_signed_url(url, token, method, **extra_params)
+        return urlfetch(signed_url).content
 
-    def get_data_from_signed_url(self, __url, __token=None, __meth='GET', **extra_params):
-        return urlfetch(self.get_signed_url(
-            __url, __token, __meth, **extra_params
-            )).content
+    def get_signed_url(self, url, token=None, method='GET', **extra_params):
+        signed_body = self.get_signed_body(url, token, method, **extra_params)
+        return '%s?%s' % (url, signed_body)
 
-    def get_signed_url(self, __url, __token=None, __meth='GET', **extra_params):
-        return '%s?%s' % (__url, self.get_signed_body(__url, __token, __meth, **extra_params))
-
-    def get_signed_body(self, __url, __token=None, __meth='GET', **extra_params):
-
+    def get_signed_body(self, url, token=None, method='GET', **extra_params):
         service_info = self.service_info
-
         kwargs = {
             'oauth_consumer_key': service_info['consumer_key'],
             'oauth_signature_method': 'HMAC-SHA1',
@@ -223,20 +215,17 @@ class OAuthClient(object):
             'oauth_timestamp': int(time()),
             'oauth_nonce': getrandbits(64),
             }
-
         kwargs.update(extra_params)
-
         if self.service_key is None:
             self.service_key = get_service_key(self.service)
-
-        if __token is not None:
-            kwargs['oauth_token'] = __token.oauth_token
-            key = self.service_key + encode(__token.oauth_token_secret)
+        if token is not None:
+            kwargs['oauth_token'] = token.oauth_token
+            key = self.service_key + encode(token.oauth_token_secret)
         else:
             key = self.service_key
 
         message = '&'.join(map(encode, [
-            __meth.upper(), __url, '&'.join(
+            method.upper(), url, '&'.join(
                 '%s=%s' % (encode(k), encode(kwargs[k])) for k in sorted(kwargs)
                 )
             ]))
@@ -248,7 +237,6 @@ class OAuthClient(object):
         return urlencode(kwargs)
 
     # who stole the cookie from the cookie jar?
-
     def get_cookie(self):
         return self.handler.request.cookies.get(
             'oauth.%s' % self.service, ''

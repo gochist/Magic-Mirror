@@ -17,11 +17,15 @@ class MainHandler(webapp.RequestHandler):
         template_dict['questions'] = query.fetch(10)
         
         if template_dict['user']:
-            info = client.get('/account/verify_credentials')
-            info2 = client.get('/statuses/user_timeline')
-            template_dict['profile_image_url'] = info['profile_image_url']
-            template_dict['info2'] = str(info2)
-        
+            try:
+                info = client.get('/account/verify_credentials')
+                info2 = client.get('/statuses/user_timeline')
+                template_dict['profile_image_url'] = info['profile_image_url']
+                import pprint
+                template_dict['info2'] = pprint.pformat(info)
+            except :
+                client.cleanup()
+            
         ret = template.render(os.path.join(config.tpl_path, 'main.html'),
                               template_dict)
         self.response.out.write(ret)
