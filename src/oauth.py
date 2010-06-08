@@ -78,7 +78,9 @@ class OAuthClient(object):
         self.token = None
 
     # public methods
-    def get(self, api_method, http_method='GET', expected_status=(200,), **extra_params):
+    def get(self, api_method, http_method='GET', expected_status=(200,), 
+            **extra_params):
+
         if not (api_method.startswith('http://') or api_method.startswith('https://')):
             api_method = '%s%s%s' % (
                 self.service_info['default_api_prefix'], api_method,
@@ -91,10 +93,8 @@ class OAuthClient(object):
                                          **extra_params)
         fetch = urlfetch(signed_url)
         if fetch.status_code not in expected_status:
-            raise ValueError(
-                "Error calling... Got return status: %i [%r]" % 
-                (fetch.status_code, fetch.content)
-                )
+            raise ValueError("Error calling... Got return status: %i [%r]" % 
+                             (fetch.status_code, fetch.content))
 
         return decode_json(fetch.content)
 
@@ -172,10 +172,11 @@ class OAuthClient(object):
             )
 
         if 'specifier_handler' in self.service_info:
-            specifier = self.token.specifier = self.service_info['specifier_handler'](self)
-            old = OAuthAccessToken.all().filter(
-                'specifier =', specifier).filter(
-                'service =', self.service)
+            self.token.specifier = self.service_info['specifier_handler'](self)
+            
+            old = OAuthAccessToken.all()                                      \
+                                  .filter('specifier =', self.token.specifier)\
+                                  .filter('service =', self.service)
             try :
                 db.delete(old)
             except Exception:
@@ -186,9 +187,9 @@ class OAuthClient(object):
         self.handler.redirect(return_to)
 
     def cleanup(self):
-        query = OAuthRequestToken.all().filter(
-            'created <', datetime.now() - EXPIRATION_WINDOW
-            )
+        expiration_time = datetime.now() - EXPIRATION_WINDOW
+        query = OAuthRequestToken.all() \
+                                 .filter('created <', expiration_time)
         count = query.count(CLEANUP_BATCH_SIZE)
         try:
             db.delete(query.fetch(CLEANUP_BATCH_SIZE))
