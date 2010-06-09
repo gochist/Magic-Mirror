@@ -46,6 +46,7 @@ class QuestionHandler(webapp.RequestHandler):
     def post(self):
         question = self.request.get('question')
         options = self.request.get('options')
+        twit_it = self.request.get('twit_it')
         try:
             q_model = QuestionModel(text=question)
             q_model.put()
@@ -56,9 +57,10 @@ class QuestionHandler(webapp.RequestHandler):
 
         except Exception:
             return
-               
-        client = OAuthClient('twitter', self)
-        client.post(api_method='/statuses/update', status=question)
+
+        if twit_it :              
+            client = OAuthClient('twitter', self)
+            client.post(api_method='/statuses/update', status=question)
             
         self.redirect('/')
         

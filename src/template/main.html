@@ -2,6 +2,23 @@
 <html>
     <head>
         <title>Magic Mirror</title>
+        <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js">
+        </script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js">
+        </script>
+        <script>
+            $(document).ready(function(){
+                $("#datepicker").datepicker();
+            });
+            
+            $(document).ready(function(){
+                $('#timepicker').timepickr({
+                    handle: '#trigger-test',
+                    convention: 12
+                });
+            });
+        </script>
     </head>
     <body>
         <div class='sign_in_layer'>
@@ -29,6 +46,10 @@
         <div class='ask_form_layer'>
             <form method="post" action="/question">
                 <div>
+                    <input type='checkbox' value='twit_it' name='twit_it'>twit it?
+                    </input>
+                </div>
+                <div>
                     Q<input name='question'>
                     </input>
                 </div>
@@ -40,10 +61,15 @@
                     </textarea>
                 </div>
                 <div>
-                    <input type="submit">
+                    due date<input name="duedate" type="text" id="datepicker">
+                    </input>due time<input name="duetime" type="text" id="timepicker">
                     </input>
-                </div>
-            </form>
-        </div>{% endif %}
-    </body>
-</html>
+                    </div>
+                    <div>
+                        <input type="submit">
+                        </input>
+                    </div>
+                </form>
+            </div>{% endif %}
+        </body>
+    </html>

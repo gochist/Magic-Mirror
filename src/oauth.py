@@ -18,25 +18,18 @@ Note: You need to be running at least version 1.1.9 of the App Engine SDK.
 I hope you find this useful, tav
 
 """
-
 # Released into the Public Domain by tav@espians.com
-
-
-import sys
 
 from datetime import datetime
 from hashlib import sha1
 from hmac import new as hmac
-from os.path import dirname, join as join_path
 from random import getrandbits
 from time import time
 from urllib import urlencode, quote as urlquote
 from uuid import uuid4
+from cgi import parse_qsl
 
-sys.path.insert(0, join_path(dirname(__file__), 'lib')) # extend sys.path
-
-from demjson import decode as decode_json
-
+from django.utils import simplejson
 from google.appengine.api.urlfetch import fetch as urlfetch
 from google.appengine.ext import db
 
@@ -47,10 +40,11 @@ from models import OAuthAccessToken, OAuthRequestToken
 # utility functions
 # ------------------------------------------------------------------------------
 def get_service_key(service, cache={}):
-    if service in cache: return cache[service]
-    return cache.setdefault(
-        service, "%s&" % encode(OAUTH_APP_SETTINGS[service]['consumer_secret'])
-        )
+    if service in cache: 
+        return cache[service]
+    else :
+        consumer_secret = OAUTH_APP_SETTINGS[service]['consumer_secret']
+        return cache.setdefault(service, "%s&" % encode(consumer_secret))
 
 def create_uuid():
     return 'id-%s' % uuid4()
@@ -68,7 +62,8 @@ OAUTH_APP_SETTINGS['twitter']['specifier_handler'] = twitter_specifier_handler
 # ------------------------------------------------------------------------------
 class OAuthClient(object):
     __public__ = ('callback', 'cleanup', 'login', 'logout')
-    def __init__(self, service, handler, oauth_callback=None, **request_params):
+    def __init__(self, service, handler, oauth_callback=None,
+                 **request_params):
         self.service = service
         self.service_info = OAUTH_APP_SETTINGS[service]
         self.service_key = None
@@ -77,48 +72,53 @@ class OAuthClient(object):
         self.oauth_callback = oauth_callback
         self.token = None
 
-    # public methods
-    def get(self, api_method, http_method='GET', expected_status=(200,), 
-            **extra_params):
+    def __complete_api_url__(self, url):
+        """                
+        http://api.url
+        """
+        prefix = self.service_info['default_api_prefix']
+        suffix = self.service_info['default_api_suffix']
+        if not (url.startswith('http://') or 
+                url.startswith('https://')):
+            url = prefix + url + suffix
+        return url
 
-        if not (api_method.startswith('http://') or api_method.startswith('https://')):
-            api_method = '%s%s%s' % (
-                self.service_info['default_api_prefix'], api_method,
-                self.service_info['default_api_suffix']
-                )
+    # public methods
+    def get(self, api_method, http_method='GET', expected_status=(200,),
+            **extra_params):
+        api_method = self.__complete_api_url__(api_method)
+
         if self.token is None:
             self.token = OAuthAccessToken.get_by_key_name(self.get_cookie())
             
-        signed_url = self.get_signed_url(api_method, self.token, http_method, 
+        signed_url = self.get_signed_url(api_method, self.token, http_method,
                                          **extra_params)
         fetch = urlfetch(signed_url)
         if fetch.status_code not in expected_status:
             raise ValueError("Error calling... Got return status: %i [%r]" % 
                              (fetch.status_code, fetch.content))
 
-        return decode_json(fetch.content)
+        return simplejson.loads(fetch.content)
+    
+    def post(self, api_method, http_method='POST', expected_status=(200,),
+             **extra_params):
+        api_method = self.__complete_api_url__(api_method)
 
-    def post(self, api_method, http_method='POST', expected_status=(200,), **extra_params):
-        if not (api_method.startswith('http://') or api_method.startswith('https://')):
-            api_method = '%s%s%s' % (
-                self.service_info['default_api_prefix'], api_method,
-                self.service_info['default_api_suffix']
-                )
-
-        if self.token is None:
+        if not self.token:
             self.token = OAuthAccessToken.get_by_key_name(self.get_cookie())
 
-        fetch = urlfetch(url=api_method, payload=self.get_signed_body(
-            api_method, self.token, http_method, **extra_params
-            ), method=http_method)
+        signed_body = self.get_signed_body(api_method, self.token, http_method,
+                                           **extra_params)
+        
+        fetch = urlfetch(url=api_method,
+                         payload=signed_body,
+                         method=http_method)
 
         if fetch.status_code not in expected_status:
-            raise ValueError(
-                "Error calling... Got return status: %i [%r]" % 
-                (fetch.status_code, fetch.content)
-                )
+            raise ValueError("Error calling... Got return status: %i [%r]" % 
+                             (fetch.status_code, fetch.content))
 
-        return decode_json(fetch.content)
+        return simplejson.loads(fetch.content)
 
     def login(self):
         proxy_id = self.get_cookie()
@@ -133,54 +133,55 @@ class OAuthClient(object):
 
     # oauth workflow
     def get_request_token(self):
-        token_info = self.get_data_from_signed_url(
-            self.service_info['request_token_url'], **self.request_params
-            )
-        token = OAuthRequestToken(
-            service=self.service,
-            **dict(token.split('=') for token in token_info.split('&'))
-            )
+        request_token_url = self.service_info['request_token_url']
+        user_auth_url = self.service_info['user_auth_url']
+        
+        token_info = self.get_data_from_signed_url(request_token_url,
+                                                   **self.request_params)
+        
+        params = dict(parse_qsl(token_info))
+        token = OAuthRequestToken(service=self.service, **params)
         token.put()
+        
         if self.oauth_callback:
             oauth_callback = {'oauth_callback': self.oauth_callback}
         else:
             oauth_callback = {}
-        self.handler.redirect(self.get_signed_url(self.service_info['user_auth_url'],
+        
+        self.handler.redirect(self.get_signed_url(user_auth_url,
                                                   token,
                                                   **oauth_callback))
 
     def callback(self, return_to='/'):
-
+        access_token_url = self.service_info['access_token_url']
+        
         oauth_token = self.handler.request.get("oauth_token")
-
         if not oauth_token:
             return self.get_request_token()
-
-        oauth_token = OAuthRequestToken.all().filter(
-            'oauth_token =', oauth_token).filter(
-            'service =', self.service).fetch(1)[0]
-
-        token_info = self.get_data_from_signed_url(
-            self.service_info['access_token_url'], oauth_token
-            )
-
+        
+        oauth_token = OAuthRequestToken.all() \
+                                       .filter('oauth_token =', oauth_token) \
+                                       .filter('service =', self.service) \
+                                       .fetch(1)[0]
+        
+        token_info = self.get_data_from_signed_url(access_token_url,
+                                                   oauth_token)
+        
+        params = dict(parse_qsl(token_info))
         key_name = create_uuid()
-
-        self.token = OAuthAccessToken(
-            key_name=key_name, service=self.service,
-            **dict(token.split('=') for token in token_info.split('&'))
-            )
-
+        self.token = OAuthAccessToken(key_name=key_name, service=self.service,
+                                      **params)
         if 'specifier_handler' in self.service_info:
             self.token.specifier = self.service_info['specifier_handler'](self)
-            
-            old = OAuthAccessToken.all()                                      \
+            old = OAuthAccessToken.all() \
                                   .filter('specifier =', self.token.specifier)\
                                   .filter('service =', self.service)
-            try :
-                db.delete(old)
-            except Exception:
-                pass
+            
+            if old:
+                try:
+                    db.delete(old)
+                except:
+                    pass
 
         self.token.put()
         self.set_cookie(key_name)
@@ -198,7 +199,7 @@ class OAuthClient(object):
         return "Cleaned %i entries" % count
 
     # request marshalling
-    def get_data_from_signed_url(self, url, token=None, method='GET', 
+    def get_data_from_signed_url(self, url, token=None, method='GET',
                                  **extra_params):
         signed_url = self.get_signed_url(url, token, method, **extra_params)
         return urlfetch(signed_url).content
@@ -209,16 +210,16 @@ class OAuthClient(object):
 
     def get_signed_body(self, url, token=None, method='GET', **extra_params):
         service_info = self.service_info
-        kwargs = {
-            'oauth_consumer_key': service_info['consumer_key'],
-            'oauth_signature_method': 'HMAC-SHA1',
-            'oauth_version': '1.0',
-            'oauth_timestamp': int(time()),
-            'oauth_nonce': getrandbits(64),
-            }
+        kwargs = {'oauth_consumer_key': service_info['consumer_key'],
+                  'oauth_signature_method': 'HMAC-SHA1',
+                  'oauth_version': '1.0',
+                  'oauth_timestamp': int(time()),
+                  'oauth_nonce': getrandbits(64)}        
         kwargs.update(extra_params)
+        
         if self.service_key is None:
             self.service_key = get_service_key(self.service)
+            
         if token is not None:
             kwargs['oauth_token'] = token.oauth_token
             key = self.service_key + encode(token.oauth_token_secret)
@@ -256,4 +257,3 @@ class OAuthClient(object):
             '%s=; path=%s; expires="Fri, 31-Dec-1999 23:59:59 GMT"' % 
             ('oauth.%s' % self.service, path)
             )
-
