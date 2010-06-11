@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import logging
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 #from google.appengine.ext.webapp.util import login_required
@@ -9,8 +9,29 @@ import config, os, cgi
 from oauthtwitter import OAuthApi
 import oauth
 
+class TwitSigninHandler(webapp.RequestHandler):
+    def get(self):
+        # get request token
+        twit = OAuthApi()
+        req_token = twit.getRequestToken()
+        
+        # insert request token into DB
+        req_token_model = OAuthRequestToken(token=req_token.key, 
+                                            secret=req_token.secret)
+        req_token_model.put()
+        
+        logging.info("req_token is made: %s"%req_token)
+        
+        # redirect user to twitter auth page
+        auth_url = twit.getAuthorizationURL(req_token)
+        self.redirect(auth_url)
+                
+
 class MainHandler(webapp.RequestHandler):
     def get(self):
+        write = self.response.out.write
+        write("<a href='/oauth/twitter/signin'>sign in with twitter</a>")
+        
 #        client = OAuthClient('twitter', self)
 #        
 #        query = QuestionModel.all().order('created_time')
@@ -27,21 +48,22 @@ class MainHandler(webapp.RequestHandler):
 #            except :
 #                client.cleanup()
 #            
-        
-        twit = OAuthApi()
-        req_token = twit.getRequestToken()
-        
-        req_token_model = OAuthRequestToken(token=req_token.key,
-                                            secret=req_token.secret)
-        req_token_model.put()
-        
-        auth_url = twit.getAuthorizationURL(req_token)
-        self.redirect(auth_url)
+#        
+#        twit = OAuthApi()
+#        req_token = twit.getRequestToken()
+#        
+#        req_token_model = OAuthRequestToken(token=req_token.key,
+#                                            secret=req_token.secret)
+#        req_token_model.put()
+#        
+#        auth_url = twit.getAuthorizationURL(req_token)
+#        self.redirect(auth_url)
 
-class CallbackHandler(webapp.RequestHandler):
+class TwitCallbackHandler(webapp.RequestHandler):
     def get(self):
         req_token = None        
         token = self.request.get("oauth_token")
+        logging.info("oauth token in callback handler request : %s"%token)
         query = OAuthRequestToken.all().filter('token =', token)
         
         if query.count() > 0:
@@ -58,9 +80,9 @@ class CallbackHandler(webapp.RequestHandler):
         
         user = twit.GetUserInfo()
         self.response.out.write(user.GetName())
-                
-        ret = twit.PostUpdates("test")
-        self.response.out.write(cgi.escape(ret))
+#                
+#        ret = twit.PostUpdates("test")
+#        self.response.out.write(cgi.escape(ret))
        
         
 #        template_dict = {}        
