@@ -6,6 +6,7 @@ from handlers import *
 def main():
     url_mapping = [('/', MainHandler),
                    ('/oauth/twitter/signin', TwitSigninHandler),
+                   ('/oauth/twitter/signout', TwitSignoutHandler),
                    ('/oauth/twitter/callback', TwitCallbackHandler),
                    ('/question', QuestionHandler),
                    ('/question/(.*)', QuestionHandler),

@@ -7,6 +7,12 @@ class OAuthRequestToken(db.Model):
     token = db.StringProperty()
     secret = db.StringProperty()
     created = db.DateTimeProperty(auto_now_add=True)
+    
+class SessionModel(db.Model):
+    twit_id = db.StringProperty(required=True)
+    token = db.StringProperty(required=True)
+    secret = db.StringProperty(required=True)
+    created = db.DateTimeProperty(auto_now_add=True)
 
 class OAuthAccessToken(db.Model):
     token = db.StringProperty()
