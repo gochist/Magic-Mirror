@@ -4,16 +4,13 @@ class UserModel(db.Model):
     user_id = db.StringProperty(required=True)
 
 class OAuthRequestToken(db.Model):
-    service = db.StringProperty()
-    oauth_token = db.StringProperty()
-    oauth_token_secret = db.StringProperty()
+    token = db.StringProperty()
+    secret = db.StringProperty()
     created = db.DateTimeProperty(auto_now_add=True)
 
 class OAuthAccessToken(db.Model):
-    service = db.StringProperty()
-    specifier = db.StringProperty()
-    oauth_token = db.StringProperty()
-    oauth_token_secret = db.StringProperty()
+    token = db.StringProperty()
+    secret = db.StringProperty()
     created = db.DateTimeProperty(auto_now_add=True)
 
 class QuestionModel(db.Model):
