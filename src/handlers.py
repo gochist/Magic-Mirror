@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 #from google.appengine.ext.webapp.util import login_required
@@ -49,15 +51,15 @@ class CallbackHandler(webapp.RequestHandler):
         
         req_token = oauth.OAuthToken(req_token.token, req_token.secret)
         
-        twit = OAuthApi(req_token)
+        twit = OAuthApi(access_token=req_token)
         access_token = twit.getAccessToken()
         
-        twit = OAuthApi(access_token)
+        twit = OAuthApi(access_token=access_token)
         
         user = twit.GetUserInfo()
         self.response.out.write(user.GetName())
                 
-        ret = twit.PostUpdates("테스트")
+        ret = twit.PostUpdates("test")
         self.response.out.write(cgi.escape(ret))
        
         
