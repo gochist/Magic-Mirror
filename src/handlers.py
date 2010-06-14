@@ -73,13 +73,14 @@ class BaseHandler(webapp.RequestHandler):
         sid = self.get_cookie("sid")
         if sid:            
             query = SessionModel.all()\
-                                .filter("key =", sid)\
-                                .filter("modified >",
-                                        time.time() - config.session_life)         
+                                .filter("key =", sid)
+#                                .filter("modified >",
+#                                        time.time() - config.session_life)         
             if query.count() > 0:
                 session = query.fetch(1)[0]
                 if extend:
-                    session.put()                
+                    session.put() 
+                logging.info("session is valid. SID:%s"%session.key()) 
                 return session
 
         return None
