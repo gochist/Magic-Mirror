@@ -72,17 +72,15 @@ class BaseHandler(webapp.RequestHandler):
         """
         sid = self.get_cookie("sid")
         if sid:            
-            query = SessionModel.all()\
-                                .filter("key =", sid)
-#                                .filter("modified >",
-#                                        time.time() - config.session_life)         
-            if query.count() > 0:
-                session = query.fetch(1)[0]
+            session = SessionModel.get(sid)      
+            if session:
+                logging.info(session.modified)
+                logging.info(session.modified.now())
+#                if session.modified.time() + config.session_life < time.time() :
+#                    return None       
                 if extend:
                     session.put() 
-                logging.info("session is valid. SID:%s"%session.key()) 
                 return session
-
         return None
     
     def get_twitapi(self, session=None):
@@ -156,10 +154,11 @@ class TwitCallbackHandler(BaseHandler):
 
         # insert session into DB
         self.new_session(str(user.id), access_token.key, access_token.secret)        
-        self.response.out.write(user.id)
-        
         # delete OAuthToken
         db.delete(req_token)
+        # redirect to home
+        self.redirect('/home')
+        
 
             
 class QuestionHandler(BaseHandler):
@@ -196,16 +195,35 @@ class QuestionHandler(BaseHandler):
 #            client.post(api_method='/statuses/update', status=question)
             
         self.redirect('/')
+        
+class HomeHandler(BaseHandler):
+    def get(self):
+        session = self.get_vaild_session()
+        if not session:
+            self.redirect('/')
+        
+        # get user information
+        twit = self.get_twitapi(session)
+        user_info = twit.GetUserInfo()
+        
+        # render home
+        ret = template.render(os.path.join(config.tpl_path, 'home.html'),
+                              {'user_info': user_info})
+        self.response.out.write(ret)
+       
 
 class MainHandler(BaseHandler):
     def get(self):
-        write = self.response.out.write
         session = self.get_vaild_session()
         if session :
-            twit = self.get_twitapi(session)
-            user = twit.GetUserInfo()
-            write("hello, %s. " % user.screen_name)
-            write("<a href='/oauth/twitter/signout'>sign out</a>")
-
-        else :
-            write("<a href='/oauth/twitter/signin'>sign in with twitter</a>")
+            self.redirect('/home')
+        
+        # build dict
+        ret = template.render(os.path.join(config.tpl_path, 'main.html'), {})
+        self.response.out.write(ret)
+                        
+#            write("hello, %s. " % user.screen_name)
+#            write("<a href='/oauth/twitter/signout'>sign out</a>")
+#
+#        else :
+#            write("<a href='/oauth/twitter/signin'>sign in with twitter</a>")

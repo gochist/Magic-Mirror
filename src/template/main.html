@@ -1,75 +1,36 @@
-<!DOCTYPE HTML>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
     <head>
         <title>Magic Mirror</title>
-        <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js">
-        </script>
-        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js">
-        </script>
-        <script>
-            $(document).ready(function(){
-                $("#datepicker").datepicker();
-            });
-            
-            $(document).ready(function(){
-                $('#timepicker').timepickr({
-                    handle: '#trigger-test',
-                    convention: 12
-                });
-            });
-        </script>
     </head>
     <body>
-        <div class='sign_in_layer'>
-            {% if user %}Hello, <img src="{{profile_image_url}}"/><a href='/oauth/twitter/logout'>sign out</a>
-            user:{{user}}
-            <br/>
-            info2:{{info2}}
-            {% else %}<a href='/oauth/twitter/login'><img src='/static/img/sign-in-with-twitter.png'></a> {% endif %}
+        <div class='logo'>
+            <h1>Magic Mirror</h1>
         </div>
-        <div class='list_layer'>
-            {% for question in questions %}
-            <ol>
-                <p>
-                    {{ question.created_time }}<a href='/question/{{question.key}}'>{{ question.text }}</a>
-                </p>
-            </ol>
-            {% endfor %}
+        <div class='signin_with_twitter'>
+            <a href='/oauth/twitter/signin'><img src='/static/img/sign-in-with-twitter.png'/></a>
         </div>
-        <div class='count_layer'>
+        <div class='home_list'>
+            <h2>Public Timeline</h2>
+            <ul>
+                Mirror, Mirror on the wall...
+            </ul>
+            <ul>
+                World Cup result
+            </ul>
+        </div>
+        <div class='introduce'>
+            <h2>What is MagicMirror?</h2>
             <p>
-                {{ m_count }} magic mirrors answered for {{ q_count }} questions today.
+                Magic Mirror is ... blah blah
+            </p>
+            <h2>How do I use...</h2>
+            <p>
+                blah blah
             </p>
         </div>
-        {% if user %}
-        <div class='ask_form_layer'>
-            <form method="post" action="/question">
-                <div>
-                    <input type='checkbox' value='twit_it' name='twit_it'>twit it?
-                    </input>
-                </div>
-                <div>
-                    Q<input name='question'>
-                    </input>
-                </div>
-                <div>
-                    Options
-                    <textarea name='options'>
-                        yes
-                        no
-                    </textarea>
-                </div>
-                <div>
-                    due date<input name="duedate" type="text" id="datepicker">
-                    </input>due time<input name="duetime" type="text" id="timepicker">
-                    </input>
-                    </div>
-                    <div>
-                        <input type="submit">
-                        </input>
-                    </div>
-                </form>
-            </div>{% endif %}
-        </body>
-    </html>
+        <div>
+            copyright reserved mashed potato, 2010
+        </div>
+    </body>
+</html>
