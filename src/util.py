@@ -15,6 +15,9 @@ def twit_login_required(handler_method):
     redirect to the request URI, and Google Accounts only redirects back as a GET
     request, so this should not be used for POSTs.
     """
+    
+    
+    
 #    def check_login(self, *args):
 #        if self.request.method != 'GET':
 #            raise webapp.Error('The check_login decorator can only be used for GET '

@@ -13,6 +13,7 @@ class SessionModel(db.Model):
     token = db.StringProperty(required=True)
     secret = db.StringProperty(required=True)
     created = db.DateTimeProperty(auto_now_add=True)
+    modified = db.DateTimeProperty(auto_now=True)
 
 class OAuthAccessToken(db.Model):
     token = db.StringProperty()
