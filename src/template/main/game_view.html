@@ -1,0 +1,17 @@
+<div>
+    <h1>Game</h1>
+    <p>
+        {{question.text}}
+    </p>
+    <p>
+        {{question.created_time}}
+    </p>
+    <p>
+        {{question.due_time}}
+    </p>
+    {% for option in options %}
+    <ol>
+        {{option.text}}
+    </ol>
+    {% endfor %}
+</div>

@@ -12,10 +12,10 @@ import oauth
 class BaseHandler(webapp.RequestHandler):
     def set_cookie(self, key, value, path='/', expires='Session'):
         add_header = self.response.headers.add_header
-        data_dict = {'key' : key,
+        data_dict = {'key': key,
                      'value': value,
-                     'path':path,
-                     'expires':expires}
+                     'path': path,
+                     'expires': expires}
         add_header('Set-Cookie',
                    '%(key)s=%(value)s; path=%(path)s; expires="%(expires)s"' % 
                    data_dict)
@@ -128,7 +128,6 @@ class TwitSignoutHandler(BaseHandler):
             
         self.redirect("/")        
 
-
 class TwitCallbackHandler(BaseHandler):
     def get(self):
         req_token = None        
@@ -160,6 +159,16 @@ class TwitCallbackHandler(BaseHandler):
         self.redirect('/home')
         
 
+
+class GameHandler(BaseHandler):
+    def get(self):
+        session = self.get_vaild_session()
+        if not session:
+            self.redirect('/')
+            
+        
+        
+    
             
 class QuestionHandler(BaseHandler):
     def get(self, q_key):
@@ -189,11 +198,7 @@ class QuestionHandler(BaseHandler):
 
         except Exception:
             return
-
-#        if twit_it :              
-#            client = OAuthClient('twitter', self)
-#            client.post(api_method='/statuses/update', status=question)
-            
+        
         self.redirect('/')
         
 class HomeHandler(BaseHandler):
@@ -207,8 +212,17 @@ class HomeHandler(BaseHandler):
         user_info = twit.GetUserInfo()
         
         # render home
-        ret = template.render(os.path.join(config.tpl_path, 'home.html'),
-                              {'user_info': user_info})
+        main = template.render(os.path.join(config.tpl_path, 'main',
+                                            'user_home.html'),
+                               {'user':user_info})
+        side = template.render(os.path.join(config.tpl_path, 'side',
+                                            'user_stats.html'),
+                               {'user':user_info})
+        
+        ret = template.render(os.path.join(config.tpl_path, 'page.html'),
+                              {'session': session,
+                               'main_layout': main,
+                               'side_layout': side})
         self.response.out.write(ret)
        
 
@@ -217,13 +231,18 @@ class MainHandler(BaseHandler):
         session = self.get_vaild_session()
         if session :
             self.redirect('/home')
+
+        # render page
+        main = template.render(os.path.join(config.tpl_path, 'main',
+                                            'public_timeline.html'),
+                               {})
+        side = template.render(os.path.join(config.tpl_path, 'side',
+                                            'introduce.html'),
+                               {})
         
-        # build dict
-        ret = template.render(os.path.join(config.tpl_path, 'main.html'), {})
+        ret = template.render(os.path.join(config.tpl_path, 'page.html'),
+                              {'session': session,
+                               'main_layout': main,
+                               'side_layout': side})        
         self.response.out.write(ret)
-                        
-#            write("hello, %s. " % user.screen_name)
-#            write("<a href='/oauth/twitter/signout'>sign out</a>")
-#
-#        else :
-#            write("<a href='/oauth/twitter/signin'>sign in with twitter</a>")
+       

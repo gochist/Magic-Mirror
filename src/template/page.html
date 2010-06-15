@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>Magic Mirror</title>
+    </head>
+    <body>
+        <div class='header_layout'>
+            <div class='logo'>
+                <h1>Magic Mirror</h1>
+            </div>
+            {% if session %}
+            <div class='top_menu'>
+                <a href='/home'>Home</a>
+                <a href='/timeline'>Timeline</a>
+                <a href='/post'>Post</a>
+                <a href='/oauth/twitter/signout'>Log out</a>
+            </div>
+            {% else %}
+            <div class='signin_with_twitter'>
+                <a href='/oauth/twitter/signin'><img src='/static/img/sign-in-with-twitter.png'/></a>
+            </div>{% end if %}
+        </div>
+        <div class='main_layout'>
+            {{main_layout}}
+        </div>
+        <div class='side_layout'>
+            {{side_layout}}
+        </div>
+        <div class='footer_layout'>
+            copyright reserved mashed potato, 2010
+        </div>
+    </body>
+</html>
