@@ -1,7 +1,7 @@
 from google.appengine.ext import db
 
 class UserModel(db.Model):
-    user_id = db.StringProperty(required=True)
+    twit_id = db.StringProperty(required=True)
 
 class OAuthRequestToken(db.Model):
     token = db.StringProperty()

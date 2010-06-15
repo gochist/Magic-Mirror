@@ -11,14 +11,15 @@
             {% if session %}
             <div class='top_menu'>
                 <a href='/home'>Home</a>
-                <a href='/timeline'>Timeline</a>
+                <a href='/timeline'>Public Timeline</a>
                 <a href='/post'>Post</a>
-                <a href='/oauth/twitter/signout'>Log out</a>
+                <a href='/oauth/twitter/signout'>Sign out</a>
             </div>
             {% else %}
             <div class='signin_with_twitter'>
                 <a href='/oauth/twitter/signin'><img src='/static/img/sign-in-with-twitter.png'/></a>
-            </div>{% end if %}
+            </div>
+			{% endif %}
         </div>
         <div class='main_layout'>
             {{main_layout}}
@@ -27,7 +28,7 @@
             {{side_layout}}
         </div>
         <div class='footer_layout'>
-            copyright reserved mashed potato, 2010
+            copyright reserved by mashed potato and Samsung SDS, 2010
         </div>
     </body>
 </html>
