@@ -34,43 +34,51 @@ div.bubble {
 
 div.logo {
     float: left;
-    width: 300px;
-    height: auto;
+	height: 30px;
 }
 
 div.top_menu {
     text-align: right;
     vertical-align: text-bottom;
     height: auto;
+    width: 200px;
+    float: right;
 }
 
 div.signin_with_twitter {
     text-align: right;
     float: right;
     width: 200px;
+	height: 30px;
     padding-top: 30px;
 }
 
 div.middle_layout {
-    position: static;
-    background-color: #FFFFFF;
+    background-color: #000;
     float: none;
-    /*margin: 0px auto;*/
+    margin: 0px;
+	padding: 0px;
     width: 763px;
-	height: 500px;
+    height: 500px;
 }
 
 div.main_layout {
     float: left;
-    width: 500px;
+    width: 543px;
+	height: 490px;
+    padding: 5px;
+    margin: 0px;
     background-color: #FFFFFF;
 }
 
 div.side_layout {
+    display: inline;
     float: right;
     width: 200px;
-	height: 300px;
+    height: 490px;
+    padding: 5px;
     background-color: #DDEEF6;
+    margin: 0px;
 }
 
 div.footer_layout {

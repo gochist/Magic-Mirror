@@ -162,7 +162,7 @@ class TwitCallbackHandler(BaseHandler):
         if query.count() > 0:
             req_token = query.fetch(1)[0]            
         else:
-            self.response.redirect('/oauth/twitter/signin')
+            self.redirect('/oauth/twitter/signin')
         
         # model to object
         req_token_obj = oauth.OAuthToken(req_token.token, req_token.secret)
