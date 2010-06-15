@@ -9,15 +9,16 @@ class User(object):
     def get_by_twit_id(self, twit_id):
         query = UserModel.all().filter("twit_id =", twit_id)
         count = query.count()
-        if count == 0:
+        if count == 1:
             self.loaded = True
             self.model = query.fetch(1)[0]
-        elif count > 1:
-            msg.warn(1, twit_id=twit_id)            
         else:
             self.loaded = False
             self.model = None
             
+        if count > 1:
+            msg.warn(1, twit_id=twit_id)            
+
         return self.model
 
     def set(self, twit_id, twit_screen_name, twit_img_url):
@@ -38,5 +39,10 @@ class User(object):
             model = UserModel(twit_id=twit_id,
                               twit_screen_name=twit_screen_name,
                               twit_img_url=twit_img_url)
+            model.put()
+            
+        self.model = model
+        
+        return self.model
         
             

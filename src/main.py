@@ -9,7 +9,8 @@ def main():
                    ('/oauth/twitter/signin', TwitSigninHandler),
                    ('/oauth/twitter/signout', TwitSignoutHandler),
                    ('/oauth/twitter/callback', TwitCallbackHandler),
-                   ('/game/new', GameHandler),
+                   ('/timeline', TimelineHandler),
+                   ('/game/(new|modify|delete)', GameHandler),
                    ('/question/(.*)', QuestionHandler),
                    ]
     application = webapp.WSGIApplication(url_mapping, debug=True)

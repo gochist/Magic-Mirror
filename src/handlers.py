@@ -13,7 +13,8 @@ import utils
 
 class BaseHandler(webapp.RequestHandler):
     # cookie related functions
-    def set_cookie(self, key, value, path='/', expires='Session'):
+    def set_cookie(self, key, value, path='/', 
+                   expires='Fri, 15-Jun-2012 23:59:59 GMT'):
         """Set cookie. 
         
         Args: 
@@ -199,15 +200,32 @@ class TwitCallbackHandler(BaseHandler):
         
         # redirect to home
         self.redirect('/home')
-        
+
+class TimelineHandler(BaseHandler):
+    def get(self):
+        session = self.get_vaild_session()
+        page_dict = {'session':session}
+        self.output_template(main_module='public_timeline.html',
+                             side_module='introduce.html',
+                             page_dict=page_dict)        
 
 
 class GameHandler(BaseHandler):
-    def get(self):
+    def get(self, mode):
         session = self.get_vaild_session()
         if not session:
             self.redirect('/')
             
+        # get user information
+        twit = self.get_twitapi(session)
+        user_info = twit.GetUserInfo()   
+        page_dict = {'user':user_info,
+                     'session':session}     
+        
+        # render home
+        self.output_template(main_module='game_form.html',
+                             side_module='post_guide.html',
+                             page_dict=page_dict)
         
 class QuestionHandler(BaseHandler):
     def get(self, q_key):
@@ -218,7 +236,7 @@ class QuestionHandler(BaseHandler):
         
         template_dict['options'] = query.fetch(10)
         template_dict['question'] = question
-        ret = template.render(os.path.join(config.tpl_path, 'question.html'), 
+        ret = template.render(os.path.join(config.tpl_path, 'question.html'),
                               template_dict)
         self.response.out.write(ret)
 
