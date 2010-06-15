@@ -98,6 +98,17 @@ class BaseHandler(webapp.RequestHandler):
             return twit
         else :
             return OAuthApi()
+    
+    def output_template(self, main_module, side_module, page_dict):
+        main_path = os.path.join(config.tpl_path, 'main', main_module)
+        side_path = os.path.join(config.tpl_path, 'side', side_module)
+        page_path = os.path.join(config.tpl_path, 'page.html')
+        
+        page_dict['main_layout'] = template.render(main_path, page_dict)
+        page_dict['side_layout'] = template.render(side_path, page_dict)
+        
+        ret = template.render(page_path, page_dict)
+        self.response.out.write(ret)
         
 
 class TwitSigninHandler(BaseHandler):
@@ -207,10 +218,9 @@ class QuestionHandler(BaseHandler):
         
         template_dict['options'] = query.fetch(10)
         template_dict['question'] = question
-        ret = template.render(os.path.join(config.tpl_path, 'question.html'), template_dict)
+        ret = template.render(os.path.join(config.tpl_path, 'question.html'), 
+                              template_dict)
         self.response.out.write(ret)
-        
-
 
     def post(self):
         question = self.request.get('question')
@@ -237,21 +247,14 @@ class HomeHandler(BaseHandler):
         
         # get user information
         twit = self.get_twitapi(session)
-        user_info = twit.GetUserInfo()        
+        user_info = twit.GetUserInfo()   
+        page_dict = {'user':user_info,
+                     'session':session}     
         
         # render home
-        main = template.render(os.path.join(config.tpl_path, 'main',
-                                            'user_home.html'),
-                               {'user':user_info})
-        side = template.render(os.path.join(config.tpl_path, 'side',
-                                            'user_stats.html'),
-                               {'user':user_info})
-        
-        ret = template.render(os.path.join(config.tpl_path, 'page.html'),
-                              {'session': session,
-                               'main_layout': main,
-                               'side_layout': side})
-        self.response.out.write(ret)
+        self.output_template(main_module='user_home.html',
+                             side_module='user_stats.html',
+                             page_dict=page_dict)
        
 
 class MainHandler(BaseHandler):
@@ -261,16 +264,8 @@ class MainHandler(BaseHandler):
             self.redirect('/home')
 
         # render page
-        main = template.render(os.path.join(config.tpl_path, 'main',
-                                            'public_timeline.html'),
-                               {})
-        side = template.render(os.path.join(config.tpl_path, 'side',
-                                            'introduce.html'),
-                               {})
-        
-        ret = template.render(os.path.join(config.tpl_path, 'page.html'),
-                              {'session': session,
-                               'main_layout': main,
-                               'side_layout': side})        
-        self.response.out.write(ret)
+        page_dict = {'session':session}
+        self.output_template(main_module='public_timeline.html',
+                             side_module='introduce.html',
+                             page_dict=page_dict)
        

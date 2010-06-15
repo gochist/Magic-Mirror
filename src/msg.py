@@ -1,8 +1,12 @@
 import logging
 
+error_msg = ["", #0
+             "download error", #1
+             "",]
+
 warn_msg = ["", #0
             "duplicated twit_id, %(twit_id)s.", #1
-            ]
+            "",]
 
 def warn(n, **dict):
     logging.warning("%05d:"%n+warn_msg[n]%dict)
