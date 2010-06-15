@@ -2,33 +2,35 @@
 <html>
     <head>
         <title>Magic Mirror</title>
+        <link rel="stylesheet" type="text/css" href="/static/css/magicmirror.css">
     </head>
     <body>
-        <div class='header_layout'>
-            <div class='logo'>
-                <h1>Magic Mirror</h1>
+        <div class='content_layout'>
+            <div class='header_layout'>
+                <div class='logo'>
+                    <h1>Magic Mirror</h1>
+                </div>
+                {% if session %}
+                <div class='top_menu'>
+                    <a href='/home'>Home</a>
+                    <a href='/timeline'>Public Timeline</a>
+                    <a href='/game/new'>Post</a>
+                    <a href='/oauth/twitter/signout'>Sign out</a>
+                </div>
+                {% else %}
+                <div class='signin_with_twitter'>
+                    <a href='/oauth/twitter/signin'><img src='/static/img/sign-in-with-twitter.png'/></a>
+                </div>{% endif %}
             </div>
-            {% if session %}
-            <div class='top_menu'>
-                <a href='/home'>Home</a>
-                <a href='/timeline'>Public Timeline</a>
-                <a href='/game/new'>Post</a>
-                <a href='/oauth/twitter/signout'>Sign out</a>
+            <div class='main_layout'>
+                {{main_layout}}
             </div>
-            {% else %}
-            <div class='signin_with_twitter'>
-                <a href='/oauth/twitter/signin'><img src='/static/img/sign-in-with-twitter.png'/></a>
+            <div class='side_layout'>
+                {{side_layout}}
             </div>
-			{% endif %}
-        </div>
-        <div class='main_layout'>
-            {{main_layout}}
-        </div>
-        <div class='side_layout'>
-            {{side_layout}}
-        </div>
-        <div class='footer_layout'>
-            copyright reserved by mashed potato and Samsung SDS, 2010
+            <div class='footer_layout'>
+                copyright reserved by mashed potato and Samsung SDS, 2010
+            </div>
         </div>
     </body>
 </html>

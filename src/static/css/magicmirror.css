@@ -1,0 +1,15 @@
+body {
+    background-color: #deeff6;
+}
+
+div.content_layout {
+    width: 600px;
+}
+
+div.header_layout {
+    background-color: #ffffff;
+}
+
+div.logo {
+    /*position: fixed;*/
+}
