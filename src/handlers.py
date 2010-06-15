@@ -262,10 +262,16 @@ class HomeHandler(BaseHandler):
         session = self.get_vaild_session()
         if not session:
             self.redirect('/')
+            return
         
         # get user information
         twit = self.get_twitapi(session)
-        user_info = twit.GetUserInfo()   
+        try:
+            user_info = twit.GetUserInfo()
+        except DownloadError:
+            self.redirect("/?msg=error")
+            return
+           
         page_dict = {'user':user_info,
                      'session':session}     
         
@@ -280,6 +286,7 @@ class MainHandler(BaseHandler):
         session = self.get_vaild_session()
         if session :
             self.redirect('/home')
+            return
 
         # render page
         page_dict = {'session':session}

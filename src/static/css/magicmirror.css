@@ -1,15 +1,78 @@
 body {
-    background-color: #deeff6;
+    text-align: left;
+    background-image: url(http://a3.twimg.com/a/1276563079/images/bg-clouds.png);
+    background-repeat: repeat-x;
+    background-color: #C0DEED;
+}
+
+.round {
+    border-bottom-left-radius: 5px 5px;
+    border-bottom-right-radius: 5px 5px;
+    border-top-left-radius: 5px 5px;
+    border-top-right-radius: 5px 5px;
 }
 
 div.content_layout {
-    width: 600px;
+    margin: auto;
+    width: 763px;
 }
 
 div.header_layout {
-    background-color: #ffffff;
+    text-align: left;
+    height: 50px;
+    float: none;
+}
+
+div.bubble {
+    background-image: url(http://a2.twimg.com/a/1276563079/images/arr2.gif);
+    background-repeat: no-repeat;
+    background-position-x: 25px;
+    background-position-y: 0px;
+    margin-top: 10px;
+    padding-top: 11px;
 }
 
 div.logo {
-    /*position: fixed;*/
+    float: left;
+    width: 300px;
+    height: auto;
+}
+
+div.top_menu {
+    text-align: right;
+    vertical-align: text-bottom;
+    height: auto;
+}
+
+div.signin_with_twitter {
+    text-align: right;
+    float: right;
+    width: 200px;
+    padding-top: 30px;
+}
+
+div.middle_layout {
+    position: static;
+    background-color: #FFFFFF;
+    float: none;
+    /*margin: 0px auto;*/
+    width: 763px;
+	height: 500px;
+}
+
+div.main_layout {
+    float: left;
+    width: 500px;
+    background-color: #FFFFFF;
+}
+
+div.side_layout {
+    float: right;
+    width: 200px;
+	height: 300px;
+    background-color: #DDEEF6;
+}
+
+div.footer_layout {
+    float: none;
 }
