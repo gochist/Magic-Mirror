@@ -2,6 +2,10 @@ from google.appengine.ext import db
 
 class UserModel(db.Model):
     twit_id = db.StringProperty(required=True)
+    twit_screen_name = db.StringProperty(required=True)
+    twit_img_url = db.StringProperty(required=True)
+    created = db.DateTimeProperty(auto_now_add=True)
+    modified = db.DateTimeProperty(auto_now=True)
 
 class OAuthRequestToken(db.Model):
     token = db.StringProperty()
@@ -9,16 +13,11 @@ class OAuthRequestToken(db.Model):
     created = db.DateTimeProperty(auto_now_add=True)
     
 class SessionModel(db.Model):
-    twit_id = db.StringProperty(required=True)
+    user = db.ReferenceProperty(UserModel, required=True)
     token = db.StringProperty(required=True)
     secret = db.StringProperty(required=True)
     created = db.DateTimeProperty(auto_now_add=True)
     modified = db.DateTimeProperty(auto_now=True)
-
-class OAuthAccessToken(db.Model):
-    token = db.StringProperty()
-    secret = db.StringProperty()
-    created = db.DateTimeProperty(auto_now_add=True)
 
 class QuestionModel(db.Model):
     text = db.StringProperty(required=True)

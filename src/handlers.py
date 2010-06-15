@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+from google.appengine.api.urlfetch_errors import DownloadError
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 #from google.appengine.ext.webapp.util import login_required
@@ -8,9 +9,22 @@ import config, os, time
 #from util import twit_login_required
 from oauthtwitter import OAuthApi
 import oauth
+import utils
 
 class BaseHandler(webapp.RequestHandler):
+    # cookie related functions
     def set_cookie(self, key, value, path='/', expires='Session'):
+        """Set cookie. 
+        
+        Args: 
+          key:  
+          value: 
+          path: 
+          expires:
+        
+        Returns:
+          None
+        """
         add_header = self.response.headers.add_header
         data_dict = {'key': key,
                      'value': value,
@@ -26,6 +40,7 @@ class BaseHandler(webapp.RequestHandler):
     def expire_cookie(self, key, path='/'):
         self.set_cookie(key, '', path, 'Fri, 31-Dec-1999 23:59:59 GMT')
 
+    # session related functions
     def delete_session(self, session):
         """Delete session from database. And expire cookie.
 
@@ -35,36 +50,30 @@ class BaseHandler(webapp.RequestHandler):
         sid = session.key()
         db.delete(session)
         self.expire_cookie("sid")
-        
-        # log info
-        logging.info("session is deleted. SID: %s" % sid)
+
         return sid
     
-    def new_session(self, twit_id, token, secret):
+    def new_session(self, user, token, secret):
         """Insert new session into database. And set cookie  
                 
         Args:
-          twit_id : twitter id (should be string)
+          user : instance of UserModel
           token : access token key
           secret : access secret key
         """
-        session_model = SessionModel(twit_id=twit_id, token=token,
+        session_model = SessionModel(user=user, token=token,
                                      secret=secret)
         session_model.put()
         
         # set cookie sid
         sid = session_model.key()
         self.set_cookie("sid", sid)
-        
-        # log info
-        logging.info("new session is created. SID: %s" % sid)
-        
     
     def get_vaild_session(self, extend=True):
         """Check if the session is vaild
         
         Args:
-          extend : after checking, extend session period.
+          extend: after checking, extend session period. (not implemented yet)
           
         Returns:
           if the session is vaild, session model will be returned. 
@@ -74,8 +83,7 @@ class BaseHandler(webapp.RequestHandler):
         if sid:            
             session = SessionModel.get(sid)      
             if session:
-                logging.info(session.modified)
-                logging.info(session.modified.now())
+                # TODO: implement session timeout
 #                if session.modified.time() + config.session_life < time.time() :
 #                    return None       
                 if extend:
@@ -103,7 +111,11 @@ class TwitSigninHandler(BaseHandler):
         
         # get request token
         twit = OAuthApi()
-        req_token = twit.getRequestToken()
+        try:
+            req_token = twit.getRequestToken()
+        except DownloadError:
+            self.redirect("/?msg=error")
+            return
         
         # insert request token into DB
         req_token_model = OAuthRequestToken(token=req_token.key,
@@ -145,16 +157,35 @@ class TwitCallbackHandler(BaseHandler):
         
         # get access token
         twit = OAuthApi(access_token=req_token_obj)
-        access_token = twit.getAccessToken()
-        
-        # get user info 
-        twit = OAuthApi(access_token=access_token)
-        user = twit.GetUserInfo()
-
-        # insert session into DB
-        self.new_session(str(user.id), access_token.key, access_token.secret)        
+        try:
+            access_token = twit.getAccessToken()
+        except DownloadError:
+            self.redirect("/?msg=error")
+            return
+            
+        token = access_token.key
+        secret = access_token.secret
         # delete OAuthToken
         db.delete(req_token)
+        
+        # get user info 
+        try:
+            twit = OAuthApi(access_token=access_token)
+        except DownloadError:
+            self.redirect("/?msg=error")
+            return
+        
+        user = twit.GetUserInfo()
+
+        # add user 
+        user_model = utils.User()
+        user_model.set(twit_id=str(user.id),
+                       twit_screen_name=user.screen_name,
+                       twit_img_url=user.profile_image_url)
+        
+        # add session
+        self.new_session(user_model.model, token, secret)        
+        
         # redirect to home
         self.redirect('/home')
         
@@ -167,9 +198,6 @@ class GameHandler(BaseHandler):
             self.redirect('/')
             
         
-        
-    
-            
 class QuestionHandler(BaseHandler):
     def get(self, q_key):
         template_dict = {}
@@ -209,7 +237,7 @@ class HomeHandler(BaseHandler):
         
         # get user information
         twit = self.get_twitapi(session)
-        user_info = twit.GetUserInfo()
+        user_info = twit.GetUserInfo()        
         
         # render home
         main = template.render(os.path.join(config.tpl_path, 'main',
