@@ -13,7 +13,7 @@ import utils
 
 class BaseHandler(webapp.RequestHandler):
     # cookie related functions
-    def set_cookie(self, key, value, path='/', 
+    def set_cookie(self, key, value, path='/',
                    expires='Fri, 15-Jun-2012 23:59:59 GMT'):
         """Set cookie. 
         
@@ -212,21 +212,48 @@ class TimelineHandler(BaseHandler):
 
 
 class GameHandler(BaseHandler):
+    def validate_request(self):
+        pass
+    
     def get(self, mode):
         session = self.get_vaild_session()
         if not session:
             self.redirect('/')
+            return
             
         # get user information
         twit = self.get_twitapi(session)
-        user_info = twit.GetUserInfo()   
+        user_info = twit.GetUserInfo() 
+         
         page_dict = {'user':user_info,
-                     'session':session}     
+                     'session':session,
+                     'jquery':True}     
         
         # render home
         self.output_template(main_module='game_form.html',
                              side_module='post_guide.html',
                              page_dict=page_dict)
+
+    def post(self):
+        session = self.get_vaild_session()
+        if not session:
+            self.redirect('/')
+            return
+        
+        page_dict = {'subject' :self.request.get('subject'),
+                     'options' : self.request.get('option',
+                                                  allow_multiple=True),
+                     'due_date' : self.request.get('due_date'),
+                     'due_hour' : self.request.get('due_hour'),
+                     'due_min' : self.request.get('due_min')}
+        
+        
+        self.validate_request()    
+        self.response.out.write(page_dict)
+        
+        
+        
+        #self.request
         
 class HomeHandler(BaseHandler):
     def get(self):

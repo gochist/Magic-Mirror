@@ -4,6 +4,7 @@ class UserModel(db.Model):
     twit_id = db.StringProperty(required=True)
     twit_screen_name = db.StringProperty(required=True)
     twit_img_url = db.StringProperty(required=True)
+    score = db.IntegerProperty(default=0)
     created = db.DateTimeProperty(auto_now_add=True)
     modified = db.DateTimeProperty(auto_now=True)
 

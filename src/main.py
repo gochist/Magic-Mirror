@@ -11,7 +11,7 @@ def main():
                    ('/oauth/twitter/callback', TwitCallbackHandler),
                    ('/timeline', TimelineHandler),
                    ('/game/(new|modify|delete)', GameHandler),
-                   ('/question/(.*)', QuestionHandler),
+                   ('/game', GameHandler),
                    ]
     application = webapp.WSGIApplication(url_mapping, debug=True)
     run_wsgi_app(application)
