@@ -163,6 +163,7 @@ class TwitCallbackHandler(BaseHandler):
             req_token = query.fetch(1)[0]            
         else:
             self.redirect('/oauth/twitter/signin')
+            return
         
         # model to object
         req_token_obj = oauth.OAuthToken(req_token.token, req_token.secret)
@@ -226,36 +227,6 @@ class GameHandler(BaseHandler):
         self.output_template(main_module='game_form.html',
                              side_module='post_guide.html',
                              page_dict=page_dict)
-        
-class QuestionHandler(BaseHandler):
-    def get(self, q_key):
-        template_dict = {}
-        question = QuestionModel.get(q_key)
-        query = OptionModel.all()
-        query.filter("question_ref = ", question)
-        
-        template_dict['options'] = query.fetch(10)
-        template_dict['question'] = question
-        ret = template.render(os.path.join(config.tpl_path, 'question.html'),
-                              template_dict)
-        self.response.out.write(ret)
-
-    def post(self):
-        question = self.request.get('question')
-        options = self.request.get('options')
-        twit_it = self.request.get('twit_it')
-        try:
-            q_model = QuestionModel(text=question)
-            q_model.put()
-            for option in options.strip().splitlines():
-                o_model = OptionModel(question_ref=q_model,
-                                      text=option)
-                o_model.put()
-
-        except Exception:
-            return
-        
-        self.redirect('/')
         
 class HomeHandler(BaseHandler):
     def get(self):

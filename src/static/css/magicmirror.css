@@ -1,6 +1,6 @@
 body {
     text-align: left;
-    background-image: url(http://a3.twimg.com/a/1276563079/images/bg-clouds.png);
+    background-image: url(/static/img/bg-clouds.png);
     background-repeat: repeat-x;
     background-color: #C0DEED;
 }
@@ -20,11 +20,10 @@ div.content_layout {
 div.header_layout {
     text-align: left;
     height: 50px;
-    float: none;
 }
 
 div.bubble {
-    background-image: url(http://a2.twimg.com/a/1276563079/images/arr2.gif);
+    background-image: url(/static/img/arr2.gif);
     background-repeat: no-repeat;
     background-position-x: 25px;
     background-position-y: 0px;
@@ -34,53 +33,58 @@ div.bubble {
 
 div.logo {
     float: left;
-	height: 30px;
+    height: 30px;
 }
 
 div.top_menu {
     text-align: right;
     vertical-align: text-bottom;
     height: auto;
-    width: 200px;
+    margin-top: 20px;
+    padding: 5px;
     float: right;
+    background-color: #FFFFFF;
 }
 
 div.signin_with_twitter {
     text-align: right;
     float: right;
     width: 200px;
-	height: 30px;
-    padding-top: 30px;
+    height: 30px;
+    margin-top: 25px;
+    margin-right: 25px;
 }
 
 div.middle_layout {
-    background-color: #000;
-    float: none;
     margin: 0px;
-	padding: 0px;
+    padding: 0px;
     width: 763px;
-    height: 500px;
+    height: auto;
+	background-color: #DDEEF6;
 }
 
 div.main_layout {
     float: left;
-    width: 543px;
-	height: 490px;
-    padding: 5px;
+    width: 523px;
+    height: auto;
+    padding: 10px;
     margin: 0px;
     background-color: #FFFFFF;
 }
 
 div.side_layout {
-    display: inline;
-    float: right;
+    float: left;
     width: 200px;
-    height: 490px;
-    padding: 5px;
+    height: auto;
+    padding: 10px;
     background-color: #DDEEF6;
     margin: 0px;
 }
 
 div.footer_layout {
-    float: none;
+	display: block;
+	position: static;
+    float: left;
+    margin: auto;
+	width: 763px;
 }
