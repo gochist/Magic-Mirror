@@ -234,11 +234,15 @@ class GameHandler(BaseHandler):
             
         # get user information
         twit = self.get_twitapi(session)
-        user_info = twit.GetUserInfo() 
+        user_info = twit.GetUserInfo()
+        
+        utc_offset_hour = session.user.utc_offset / (3600.0)
+        tz_str = "UTC%+02.1f(%s)" % (utc_offset_hour, session.user.time_zone) 
          
         page_dict = {'user':user_info,
                      'session':session,
-                     'jquery':True}
+                     'jquery':True,
+                     'timezone':tz_str}
         
         # render home
         self.output_template(main_module='game_form.html',
@@ -253,17 +257,22 @@ class GameHandler(BaseHandler):
         
         page_dict = {'subject' :self.request.get('subject').strip(),
                      'options' : self.request.get('option',
-                                                  allow_multiple=True),
-                     'deadline' : datetime.datetime.now()}
+                                                  allow_multiple=True)}
 
-        d = self.request.get('due_date')
-        h = self.request.get('due_hour')
-        m = self.request.get('due_min')
+        # validate form        
+        utc_offset = session.user.utc_offset
+        due_date = self.request.get('due_date')
+        due_time = self.request.get('due_time')
+        deadline = due_date + due_time
+        page_dict['deadline'] = utils.utc_time(deadline, utc_offset)
+        
+        # pack data
         
         if not self.validate_form(page_dict):
             self.redirect('/game/new')
             return
         
+        # TODO: implement this
         # insert game into DB
         game = GameModel(subject=page_dict['subject'],
                          options=page_dict['options'],

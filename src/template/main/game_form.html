@@ -6,8 +6,8 @@
     });
     
     function add_option(){
-		text = "<input name='option' type='text'>"
-		
+        text = "<input name='option' type='text'>"
+        
         alert(text);
     }
 </script>
@@ -17,9 +17,7 @@
         <div>
             <h2>Subject</h2>
             <div>
-                <textarea autocomplete="off" tabindex="1" cols="40" rows="2" name='subject'>
-                    Mirror, mirror on the wall, Who is the fairest fair of all?
-                </textarea>
+                <textarea autocomplete="off" tabindex="1" cols="40" rows="2" name='subject'>Mirror, mirror on the wall, Who is the fairest fair of all?</textarea>
             </div>
         </div>
         <div>
@@ -37,43 +35,62 @@
             </div>
         </div>
         <div>
-            <h2>Due Date</h2>
+            <h2>Deadline</h2>
             <div>
                 <input id="datepicker" name='due_date' type='text'>
-            </div><h2>Due Time</h2>
+            </div>
             <div>
-                <select name='due_hour' value='00'>
-                    <option value='00'>00</option>
-                    <option value='01'>01</option>
-                    <option value='02'>02</option>
-                    <option value='03'>03</option>
-                    <option value='04'>04</option>
-                    <option value='05'>05</option>
-                    <option value='06'>06</option>
-                    <option value='07'>07</option>
-                    <option value='08'>08</option>
-                    <option value='09'>09</option>
-                    <option value='10'>10</option>
-                    <option value='11'>11</option>
-                    <option value='12'>12</option>
-                    <option value='13'>13</option>
-                    <option value='14'>14</option>
-                    <option value='15'>15</option>
-                    <option value='16'>16</option>
-                    <option value='17'>17</option>
-                    <option value='18'>18</option>
-                    <option value='19'>19</option>
-                    <option value='20'>20</option>
-                    <option value='21'>21</option>
-                    <option value='22'>22</option>
-                    <option value='23'>23</option>
+                <select name='due_time' value='00'>
+                    <option value='12:00AM'>12:00AM</option>
+                    <option value='12:30AM'>12:30AM</option>
+                    <option value='01:00AM'>01:00AM</option>
+                    <option value='01:30AM'>01:30AM</option>
+                    <option value='02:00AM'>02:00AM</option>
+                    <option value='02:30AM'>02:30AM</option>
+                    <option value='03:00AM'>03:00AM</option>
+                    <option value='03:30AM'>03:30AM</option>
+                    <option value='04:00AM'>04:00AM</option>
+                    <option value='04:30AM'>04:30AM</option>
+                    <option value='05:00AM'>05:00AM</option>
+                    <option value='05:30AM'>05:30AM</option>
+                    <option value='06:00AM'>06:00AM</option>
+                    <option value='06:30AM'>06:30AM</option>
+                    <option value='07:00AM'>07:00AM</option>
+                    <option value='07:30AM'>07:30AM</option>
+                    <option value='08:00AM'>08:00AM</option>
+                    <option value='08:30AM'>08:30AM</option>
+                    <option value='09:00AM'>09:00AM</option>
+                    <option value='09:30AM'>09:30AM</option>
+                    <option value='10:00AM'>10:00AM</option>
+                    <option value='10:30AM'>10:30AM</option>
+                    <option value='11:00AM'>11:00AM</option>
+                    <option value='11:30PM'>11:30PM</option>
+                    <option value='12:00PM'>12:00PM</option>
+                    <option value='12:30PM'>12:30PM</option>
+                    <option value='01:00PM'>01:00PM</option>
+                    <option value='01:30PM'>01:30PM</option>
+                    <option value='02:00PM'>02:00PM</option>
+                    <option value='02:30PM'>02:30PM</option>
+                    <option value='03:00PM'>03:00PM</option>
+                    <option value='03:30PM'>03:30PM</option>
+                    <option value='04:00PM'>04:00PM</option>
+                    <option value='04:30PM'>04:30PM</option>
+                    <option value='05:00PM'>05:00PM</option>
+                    <option value='05:30PM'>05:30PM</option>
+                    <option value='06:00PM'>06:00PM</option>
+                    <option value='06:30PM'>06:30PM</option>
+                    <option value='07:00PM'>07:00PM</option>
+                    <option value='07:30PM'>07:30PM</option>
+                    <option value='08:00PM'>08:00PM</option>
+                    <option value='08:30PM'>08:30PM</option>
+                    <option value='09:00PM'>09:00PM</option>
+                    <option value='09:30PM'>09:30PM</option>
+                    <option value='10:00PM'>10:00PM</option>
+                    <option value='10:30PM'>10:30PM</option>
+                    <option value='11:00PM'>11:00PM</option>
+                    <option value='11:30PM'>11:30PM</option>
                 </select>
-                <select name='due_min' value='00'>
-                    <option value='00'>00</option>
-                    <option value='15'>15</option>
-                    <option value='30'>30</option>
-                    <option value='45'>45</option>
-                </select>
+                {{timezone}}
             </div>
         </div>
         <div>
