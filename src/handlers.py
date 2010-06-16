@@ -5,7 +5,7 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 #from google.appengine.ext.webapp.util import login_required
 from models import *
-import config, os, time
+import config, os, time, datetime
 #from util import twit_login_required
 from oauthtwitter import OAuthApi
 import oauth
@@ -194,7 +194,9 @@ class TwitCallbackHandler(BaseHandler):
         user_model = utils.User()
         user_model.set(twit_id=str(user.id),
                        twit_screen_name=user.screen_name,
-                       twit_img_url=user.profile_image_url)
+                       twit_img_url=user.profile_image_url,
+                       time_zone=user.time_zone,
+                       utc_offset=user.utc_offset)
         
         # add session
         self.new_session(user_model.model, token, secret)        
@@ -210,10 +212,19 @@ class TimelineHandler(BaseHandler):
                              side_module='introduce.html',
                              page_dict=page_dict)        
 
+class GameViewHandler(BaseHandler):
+    def get(self, no):
+        session = self.get_vaild_session()
+        page_dict = {'session': session}
+        
+        self.output_template(main_module='game_view.html',
+                             side_module='game_stats.html',
+                             page_dict=page_dict)
 
 class GameHandler(BaseHandler):
-    def validate_request(self):
-        pass
+    def validate_form(self, form):
+        # TODO: implement this
+        return True
     
     def get(self, mode):
         session = self.get_vaild_session()
@@ -227,7 +238,7 @@ class GameHandler(BaseHandler):
          
         page_dict = {'user':user_info,
                      'session':session,
-                     'jquery':True}     
+                     'jquery':True}
         
         # render home
         self.output_template(main_module='game_form.html',
@@ -240,15 +251,26 @@ class GameHandler(BaseHandler):
             self.redirect('/')
             return
         
-        page_dict = {'subject' :self.request.get('subject'),
+        page_dict = {'subject' :self.request.get('subject').strip(),
                      'options' : self.request.get('option',
                                                   allow_multiple=True),
-                     'due_date' : self.request.get('due_date'),
-                     'due_hour' : self.request.get('due_hour'),
-                     'due_min' : self.request.get('due_min')}
+                     'deadline' : datetime.datetime.now()}
+
+        d = self.request.get('due_date')
+        h = self.request.get('due_hour')
+        m = self.request.get('due_min')
         
+        if not self.validate_form(page_dict):
+            self.redirect('/game/new')
+            return
         
-        self.validate_request()    
+        # insert game into DB
+        game = GameModel(subject=page_dict['subject'],
+                         options=page_dict['options'],
+                         deadline=page_dict['deadline'],
+                         created_by=session.user)
+        game.put()
+        
         self.response.out.write(page_dict)
         
         

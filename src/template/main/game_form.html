@@ -1,10 +1,15 @@
 <script type="text/javascript">
     $(function(){
         $("#datepicker").datepicker({
-            minDate: 0,
-            maxDate: '+1M +10D'
+            minDate: 0
         });
     });
+    
+    function add_option(){
+		text = "<input name='option' type='text'>"
+		
+        alert(text);
+    }
 </script>
 <div>
     <h1>issue a game</h1>
@@ -12,21 +17,23 @@
         <div>
             <h2>Subject</h2>
             <div>
-                <textarea name='subject'>
+                <textarea autocomplete="off" tabindex="1" cols="40" rows="2" name='subject'>
                     Mirror, mirror on the wall, Who is the fairest fair of all?
                 </textarea>
             </div>
         </div>
         <div>
             <h2>Options</h2>
-            <div>
-                <input name='option' type='text' value="yes">
+            <div id='options'>
+                <div>
+                    <input name='option' type='text' value="yes">
+                </div>
+                <div>
+                    <input name='option' type='text' value="no">
+                </div>
             </div>
             <div>
-                <input name='option' type='text' value="no">
-            </div>
-            <div>
-                <a href='#'>+ add option</a>
+                <a href='javascript:add_option()'>+ add option</a>
             </div>
         </div>
         <div>
@@ -36,16 +43,16 @@
             </div><h2>Due Time</h2>
             <div>
                 <select name='due_hour' value='00'>
-                    <option value='0'>00</option>
-                    <option value='1'>01</option>
-                    <option value='2'>02</option>
-                    <option value='3'>03</option>
-                    <option value='4'>04</option>
-                    <option value='5'>05</option>
-                    <option value='6'>06</option>
-                    <option value='7'>07</option>
-                    <option value='8'>08</option>
-                    <option value='9'>09</option>
+                    <option value='00'>00</option>
+                    <option value='01'>01</option>
+                    <option value='02'>02</option>
+                    <option value='03'>03</option>
+                    <option value='04'>04</option>
+                    <option value='05'>05</option>
+                    <option value='06'>06</option>
+                    <option value='07'>07</option>
+                    <option value='08'>08</option>
+                    <option value='09'>09</option>
                     <option value='10'>10</option>
                     <option value='11'>11</option>
                     <option value='12'>12</option>

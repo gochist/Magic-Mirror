@@ -4,6 +4,8 @@ class UserModel(db.Model):
     twit_id = db.StringProperty(required=True)
     twit_screen_name = db.StringProperty(required=True)
     twit_img_url = db.StringProperty(required=True)
+    time_zone = db.StringProperty(required=True)
+    utc_offset = db.IntegerProperty(required=True)
     score = db.IntegerProperty(default=0)
     created = db.DateTimeProperty(auto_now_add=True)
     modified = db.DateTimeProperty(auto_now=True)
@@ -20,19 +22,20 @@ class SessionModel(db.Model):
     created = db.DateTimeProperty(auto_now_add=True)
     modified = db.DateTimeProperty(auto_now=True)
 
-class QuestionModel(db.Model):
-    text = db.StringProperty(required=True)
-    created_by = db.ReferenceProperty(UserModel)    
+class GameModel(db.Model):
+    subject = db.StringProperty(required=True)
+    deadline = db.DateTimeProperty(required=True)
+    options = db.StringListProperty(required=True)
+    created_by = db.ReferenceProperty(UserModel, required=True)    
     created_time = db.DateTimeProperty(auto_now_add=True)
-    due_time = db.DateTimeProperty()
-
-class OptionModel(db.Model):
-    question_ref = db.ReferenceProperty(QuestionModel)
-    text = db.StringProperty(required=True)
+    modified_time = db.DateTimeProperty(auto_now=True)
 
 class OptionUserMapModel(db.Model):
     user = db.ReferenceProperty(UserModel, required=True)
-    option = db.ReferenceProperty(OptionModel, required=True)
+    option = db.ReferenceProperty(GameModel, required=True)
+    option_no = db.IntegerProperty(required=True)
+    created_time = db.DateTimeProperty(auto_now_add=True)
+    modified_time = db.DateTimeProperty(auto_now=True)
     
    
 #    order = db.IntegerProperty(required=True)

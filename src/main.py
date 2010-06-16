@@ -6,12 +6,13 @@ from handlers import *
 def main():
     url_mapping = [('/', MainHandler),
                    ('/home', HomeHandler),
+                   ('/([0-9]*)', GameViewHandler),
                    ('/oauth/twitter/signin', TwitSigninHandler),
                    ('/oauth/twitter/signout', TwitSignoutHandler),
                    ('/oauth/twitter/callback', TwitCallbackHandler),
-                   ('/timeline', TimelineHandler),
-                   ('/game/(new|modify|delete)', GameHandler),
+                   ('/game/(new|modify|delete)', GameHandler),                   
                    ('/game', GameHandler),
+                   ('/timeline', TimelineHandler),
                    ]
     application = webapp.WSGIApplication(url_mapping, debug=True)
     run_wsgi_app(application)
