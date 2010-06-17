@@ -295,7 +295,7 @@ class GameHandler(BaseHandler):
                          deadline=page_dict['deadline'],
                          created_by=session.user)
         game.put()
-        self.redirect("/%s"%game.key().id())
+        self.redirect("/%s" % game.key().id())
         
         
 class HomeHandler(BaseHandler):
@@ -339,3 +339,25 @@ class MainHandler(BaseHandler):
                          session=session,
                          game_preview=game_list)
        
+class TestHandler(BaseHandler):
+    def get(self):
+        # setting user
+        query = UserModel.all().filter('twit_id =', '15640669')
+        if query.count() :
+            db.delete(query.fetch(1))
+            
+        user = UserModel(twit_id='15640669', twit_screen_name='gochist',
+                         twit_img_url='http://a1.twimg.com/profile_images/64147960/gochist_normal.JPG', 
+                         time_zone='Seoul',
+                         utc_offset=32400, score=123)
+        user.put()
+
+        # setting session                
+        session = SessionModel(secret="Uw9Lfo6iansEYfeZ0OfcrlqNxpFExHHOGIDUidUgg",
+                               token="15640669-cusYBmGikvntMdQmwk56et6mAj2X09af0az7D0SY",
+                               user=user)
+        session.put()
+        
+        self.set_cookie("sid", session.key())
+    
+        # setting cookie

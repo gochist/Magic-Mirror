@@ -88,3 +88,7 @@ div.footer_layout {
     margin: auto;
 	width: 763px;
 }
+
+div.game:hover {
+	background-color: #DDEEF6
+}
