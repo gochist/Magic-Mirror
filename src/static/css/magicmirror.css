@@ -60,7 +60,8 @@ div.middle_layout {
     padding: 0px;
     width: 763px;
     height: auto;
-	background-color: #DDEEF6;
+    overflow: hidden;
+    background-color: #DDEEF6;
 }
 
 div.main_layout {
@@ -82,13 +83,48 @@ div.side_layout {
 }
 
 div.footer_layout {
-	display: block;
-	position: static;
+    display: block;
+    position: static;
     float: left;
     margin: auto;
-	width: 763px;
+    width: 763px;
+}
+
+div.game {
+    padding: 3px;
+    border: dotted;
+    border-color: #CCCCCC;
+    border-left: hidden;
+    border-right: hidden;
+    border-bottom: hidden;
+    border-width: 1px;
 }
 
 div.game:hover {
-	background-color: #DDEEF6
+    padding-left: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    border: solid;
+    border-width: 1px;
+}
+
+img.user_img {
+    margin: 1px;
+    float: left;
+}
+
+p.twit_text {
+    margin-top: 0px;
+    margin-right: 10px;
+    overflow: hidden;
+}
+
+ul.game_list {
+    margin: auto;
+    padding: 0px;
+}
+
+h2 {
+    margin: 0px;
+    padding: 0px;
 }

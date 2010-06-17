@@ -359,5 +359,8 @@ class TestHandler(BaseHandler):
         session.put()
         
         self.set_cookie("sid", session.key())
+        
+        # 
+        db.delete(GameModel.all().fetch(100))
     
         # setting cookie

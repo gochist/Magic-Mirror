@@ -1,12 +1,10 @@
-<ul>
+<ul class='game_list'>
     <div class='game'>
         <img class='user_img' src='{{game.created_by.twit_img_url}}'>
-        <p>
+        <p class='twit_text'>
             <strong>{{game.created_by.twit_screen_name}}</strong>
-            {{game.subject}}
+            {{game.subject}}<br/>
+            {{game.deadline}}
         </p>
-		<p>
-			{{game.deadline}}
-		</p>
     </div>
 </ul>
