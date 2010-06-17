@@ -1,17 +1,19 @@
 <div>
     <h1>Game</h1>
+    <img src='{{game.created_by.twit_img_url}}'>
     <p>
-        {{question.text}}
+        <strong>{{game.created_by.twit_screen_name}}</strong>
+        {{game.subject}}
     </p>
     <p>
-        {{question.created_time}}
+        {{game.created_time}}
     </p>
     <p>
-        {{question.due_time}}
+        {{game.deadline}}
     </p>
-    {% for option in options %}
+    {% for option in game.options %}
     <ol>
-        {{option.text}}
+        {{option}}
     </ol>
     {% endfor %}
 </div>

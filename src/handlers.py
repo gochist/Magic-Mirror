@@ -3,10 +3,8 @@ import logging
 from google.appengine.api.urlfetch_errors import DownloadError
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
-#from google.appengine.ext.webapp.util import login_required
 from models import *
-import config, os, time, datetime
-#from util import twit_login_required
+import config, os, datetime
 from oauthtwitter import OAuthApi
 import oauth
 import utils
@@ -99,8 +97,12 @@ class BaseHandler(webapp.RequestHandler):
             return twit
         else :
             return OAuthApi()
+        
+    def render_module(self, module, **mod_dict):
+        module_path = os.path.join(config.tpl_path, 'module', module)
+        return template.render(module_path, mod_dict)
     
-    def output_template(self, main_module, side_module, page_dict):
+    def render_page(self, main_module, side_module, **page_dict):
         main_path = os.path.join(config.tpl_path, 'main', main_module)
         side_path = os.path.join(config.tpl_path, 'side', side_module)
         page_path = os.path.join(config.tpl_path, 'page.html')
@@ -206,20 +208,35 @@ class TwitCallbackHandler(BaseHandler):
 
 class TimelineHandler(BaseHandler):
     def get(self):
-        session = self.get_vaild_session()
-        page_dict = {'session':session}
-        self.output_template(main_module='public_timeline.html',
-                             side_module='introduce.html',
-                             page_dict=page_dict)        
+        session = self.get_vaild_session()        
+        games = GameModel.all() \
+                         .filter("deadline >", datetime.datetime.now()) \
+                         .order("-deadline") \
+                         .fetch(10)
+
+        game_list = ""
+        for game in games:
+            game_list += self.render_module("game_preview.html",
+                                            game=game)
+                                           
+        self.render_page(main_module='public_timeline.html',
+                         side_module='introduce.html',
+                         session=session,
+                         game_preview=game_list)        
 
 class GameViewHandler(BaseHandler):
-    def get(self, no):
+    def get(self, id):
         session = self.get_vaild_session()
-        page_dict = {'session': session}
         
-        self.output_template(main_module='game_view.html',
-                             side_module='game_stats.html',
-                             page_dict=page_dict)
+        game = GameModel.get_by_id(id)
+        # FIXME:
+        if not game:
+            raise Exception
+        
+        self.render_page(main_module='game_view.html',
+                         side_module='game_stats.html',
+                         sessoin=session,
+                         game=game)
 
 class GameHandler(BaseHandler):
     def validate_form(self, form):
@@ -237,17 +254,15 @@ class GameHandler(BaseHandler):
         user_info = twit.GetUserInfo()
         
         utc_offset_hour = session.user.utc_offset / (3600.0)
-        tz_str = "UTC%+02.1f(%s)" % (utc_offset_hour, session.user.time_zone) 
-         
-        page_dict = {'user':user_info,
-                     'session':session,
-                     'jquery':True,
-                     'timezone':tz_str}
+        tz_str = "%s(UTC%+02.1f)" % (session.user.time_zone, utc_offset_hour) 
         
-        # render home
-        self.output_template(main_module='game_form.html',
-                             side_module='post_guide.html',
-                             page_dict=page_dict)
+        # render page
+        self.render_page(main_module='game_form.html',
+                         side_module='post_guide.html',
+                         user=user_info,
+                         session=session,
+                         jquery=True,
+                         timezone=tz_str)
 
     def post(self):
         session = self.get_vaild_session()
@@ -279,12 +294,8 @@ class GameHandler(BaseHandler):
                          deadline=page_dict['deadline'],
                          created_by=session.user)
         game.put()
+        self.redirect("/%s"%game.id)
         
-        self.response.out.write(page_dict)
-        
-        
-        
-        #self.request
         
 class HomeHandler(BaseHandler):
     def get(self):
@@ -301,13 +312,12 @@ class HomeHandler(BaseHandler):
             self.redirect("/?msg=error")
             return
            
-        page_dict = {'user':user_info,
-                     'session':session}     
         
-        # render home
-        self.output_template(main_module='user_home.html',
-                             side_module='user_stats.html',
-                             page_dict=page_dict)
+        # render page
+        self.render_page(main_module='user_home.html',
+                         side_module='user_stats.html',
+                         session=session,
+                         user=user_info)
        
 
 class MainHandler(BaseHandler):
@@ -316,10 +326,15 @@ class MainHandler(BaseHandler):
         if session :
             self.redirect('/home')
             return
-
+        
+        games = GameModel.all().order("-deadline").fetch(10)
+        game_list = ""
+        for game in games:
+            game_list += self.render_module("game_preview.html",
+                                            game=game)
         # render page
-        page_dict = {'session':session}
-        self.output_template(main_module='public_timeline.html',
-                             side_module='introduce.html',
-                             page_dict=page_dict)
+        self.render_page(main_module='public_timeline.html',
+                         side_module='introduce.html',
+                         session=session,
+                         game_preview=game_list)
        
