@@ -32,7 +32,7 @@ class GameModel(db.Model):
 
 class OptionUserMapModel(db.Model):
     user = db.ReferenceProperty(UserModel, required=True)
-    option = db.ReferenceProperty(GameModel, required=True)
+    game = db.ReferenceProperty(GameModel, required=True)
     option_no = db.IntegerProperty(required=True)
     created_time = db.DateTimeProperty(auto_now_add=True)
     modified_time = db.DateTimeProperty(auto_now=True)

@@ -13,7 +13,10 @@
     </p>
     {% for option in game.options %}
     <ol>
-        {{option|escape}}
+        <a href='/{{game.key.id}}/{{forloop.counter0}}'>{{option|escape}}</a>
+		{% for gamer in gamers_list[forloop.counter0] %}
+			<ul><img src='{{gamer.twit_img_url}}'></ul>
+		{% endfor %}
     </ol>
     {% endfor %}
 </div>
