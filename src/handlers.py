@@ -9,6 +9,7 @@ from oauthtwitter import OAuthApi
 import oauth
 import utils
 
+
 class BaseHandler(webapp.RequestHandler):
     # cookie related functions
     def set_cookie(self, key, value, path='/',
@@ -228,14 +229,14 @@ class GameViewHandler(BaseHandler):
     def get(self, id):
         session = self.get_vaild_session()
         
-        game = GameModel.get_by_id(id)
+        game = GameModel.get_by_id(int(id))
         # FIXME:
         if not game:
             raise Exception
         
         self.render_page(main_module='game_view.html',
                          side_module='game_stats.html',
-                         sessoin=session,
+                         session=session,
                          game=game)
 
 class GameHandler(BaseHandler):
@@ -294,7 +295,7 @@ class GameHandler(BaseHandler):
                          deadline=page_dict['deadline'],
                          created_by=session.user)
         game.put()
-        self.redirect("/%s"%game.id)
+        self.redirect("/%s"%game.key().id())
         
         
 class HomeHandler(BaseHandler):
