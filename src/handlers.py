@@ -288,7 +288,7 @@ class GameHandler(BaseHandler):
             self.redirect('/game/new')
             return
         
-        # TODO: implement this
+        # TODO: implement twit msg
         # insert game into DB
         game = GameModel(subject=page_dict['subject'],
                          options=page_dict['options'],

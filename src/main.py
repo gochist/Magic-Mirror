@@ -1,8 +1,7 @@
-#from google.appengine.api import users
 from google.appengine.ext import webapp
+from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
 from handlers import *
-from google.appengine.ext.webapp import template
 
 template.register_template_library('mirror_filters')
 
@@ -13,7 +12,7 @@ def main():
                    ('/oauth/twitter/signin', TwitSigninHandler),
                    ('/oauth/twitter/signout', TwitSignoutHandler),
                    ('/oauth/twitter/callback', TwitCallbackHandler),
-                   ('/game/(new|modify|delete)', GameHandler),                   
+                   ('/game/(new|modify|delete)', GameHandler),
                    ('/game', GameHandler),
                    ('/timeline', TimelineHandler),
                    ]

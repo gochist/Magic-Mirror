@@ -36,14 +36,3 @@ class OptionUserMapModel(db.Model):
     option_no = db.IntegerProperty(required=True)
     created_time = db.DateTimeProperty(auto_now_add=True)
     modified_time = db.DateTimeProperty(auto_now=True)
-    
-   
-#    order = db.IntegerProperty(required=True)
-
-#    name = db.StringProperty(required=True)
-#    type = db.StringProperty(required=True, 
-#                             choices=set(["cat", "dog", "bird"]))
-#    birthdate = db.DateProperty()
-#    weight_in_pounds = db.IntegerProperty()
-#    spayed_or_neutered = db.BooleanProperty()
-#    owner = db.UserProperty(required=True)
