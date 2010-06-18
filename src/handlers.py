@@ -225,19 +225,53 @@ class TimelineHandler(BaseHandler):
                          session=session,
                          game_preview=game_list)        
 
+class GameJoinHandler(BaseHandler):
+    def get(self, game_id, option_no):
+        game_id = int(game_id)
+        option_no = int(option_no)
+                
+        session = self.get_vaild_session()
+        if not session:
+            self.redirect('/%s' % game_id)
+            return
+        
+        game = GameModel.get_by_id(game_id)
+        
+        query = OptionUserMapModel.all().filter('game = ', game)\
+                                        .filter('user = ', session.user)
+        if query.count() > 0 :
+            option_map = query.fetch(1)[0]
+            option_map.option_no = option_no
+            option_map.put()
+        else : 
+            option_map = OptionUserMapModel(user=session.user,
+                                            game=game,
+                                            option_no=option_no)
+            option_map.put()
+        
+        self.redirect('/%s' % game_id)
+
 class GameViewHandler(BaseHandler):
-    def get(self, id):
+    def get(self, game_id):
         session = self.get_vaild_session()
         
-        game = GameModel.get_by_id(int(id))
+        game = GameModel.get_by_id(int(game_id))
         # FIXME:
         if not game:
             raise Exception
         
+        gamers_list = []
+        for i,option in enumerate(game.options):
+            gamers = OptionUserMapModel.all()\
+                                       .filter('game =', game)\
+                                       .filter('option_no =', i)
+            gamers_list.append(gamers.fetch(100))
+        
         self.render_page(main_module='game_view.html',
                          side_module='game_stats.html',
                          session=session,
-                         game=game)
+                         game=game,
+                         gamers=gamers_list)
 
 class GameHandler(BaseHandler):
     def validate_form(self, form):
