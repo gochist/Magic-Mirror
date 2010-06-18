@@ -1,11 +1,18 @@
+{% spaceless %}
 <ul class='game_list'>
     <div class='game'>
         <img class='user_img' src='{{game.created_by.twit_img_url}}'>
-        <p class='twit_text'>
-            <strong>{{game.created_by.twit_screen_name}}</strong>
-            {{game.subject}}
-            <br/>
-            {{game.deadline}}
-        </p>
+        <div class='message'>
+            <p class='twit_text'>
+                <strong>{{game.created_by.twit_screen_name}}</strong>
+                {{game.subject}}
+                <br/>
+                {{game.deadline}}
+            </p>
+            <div class='message_links'>
+                <a href='/{{game.key.id}}'>view</a>
+            </div>
+        </div>
     </div>
 </ul>
+{% endspaceless %}

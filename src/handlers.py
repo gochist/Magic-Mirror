@@ -260,18 +260,19 @@ class GameViewHandler(BaseHandler):
         if not game:
             raise Exception
         
-        gamers_list = []
+        option_game_map = {}
         for i,option in enumerate(game.options):
             gamers = OptionUserMapModel.all()\
                                        .filter('game =', game)\
-                                       .filter('option_no =', i)
-            gamers_list.append(gamers.fetch(100))
+                                       .filter('option_no =', i)            
+            option_game_map[option] = gamers.fetch(100)
+        
         
         self.render_page(main_module='game_view.html',
                          side_module='game_stats.html',
                          session=session,
                          game=game,
-                         gamers=gamers_list)
+                         gamers=option_game_map)
 
 class GameHandler(BaseHandler):
     def validate_form(self, form):
@@ -367,6 +368,7 @@ class MainHandler(BaseHandler):
         for game in games:
             game_list += self.render_module("game_preview.html",
                                             game=game)
+        
         # render page
         self.render_page(main_module='public_timeline.html',
                          side_module='introduce.html',
@@ -396,5 +398,6 @@ class TestHandler(BaseHandler):
         
         # 
         db.delete(GameModel.all().fetch(100))
-    
-        # setting cookie
+        
+        self.redirect('/')
+

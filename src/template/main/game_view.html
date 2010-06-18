@@ -1,3 +1,4 @@
+{% spaceless %}
 <div>
     <h1>Game</h1>
     <img src='{{game.created_by.twit_img_url}}'>
@@ -11,12 +12,11 @@
     <p>
         {{game.deadline}}
     </p>
-    {% for option in game.options %}
+    {% for option in gamers %}
     <ol>
         <a href='/{{game.key.id}}/{{forloop.counter0}}'>{{option|escape}}</a>
-		{% for gamer in gamers_list[forloop.counter0] %}
-			<ul><img src='{{gamer.twit_img_url}}'></ul>
-		{% endfor %}
+        {{gamers|escape}}
     </ol>
     {% endfor %}
 </div>
+{% endspaceless %}

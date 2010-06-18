@@ -104,12 +104,15 @@ div.game:hover {
     padding-left: 2px;
     padding-right: 2px;
     padding-bottom: 2px;
-    border: solid;
+    border: dotted;
+	background-color: #c0deed;
+	border-color: #FFCCCC;
     border-width: 1px;
 }
 
 img.user_img {
     margin: 1px;
+	margin-right: 12px;
     float: left;
 }
 
@@ -122,6 +125,14 @@ p.twit_text {
 ul.game_list {
     margin: auto;
     padding: 0px;
+}
+
+div.message {
+    overflow: hidden;
+}
+
+div.message_links {
+    float: right;
 }
 
 h2 {
