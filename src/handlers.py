@@ -321,7 +321,7 @@ class GameHandler(BaseHandler):
         user_info = twit.GetUserInfo()
                 
         # validate form
-        if user_info.utc_offset:
+        if not user_info.utc_offset:
             user_info.utc_offset = 0         
         utc_offset = user_info.utc_offset
         due_date = self.request.get('due_date')

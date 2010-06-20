@@ -5,9 +5,9 @@
         <div class='message'>
             <p class='twit_text'>
                 <strong>{{game.created_by.twit_screen_name}}</strong>
-                {{game.subject}}
+                {{game.subject|escape}}
                 <br/>
-                {{game.deadline}}
+                <span class='deadline'>{{game.deadline|humantime}}</span>
             </p>
             <div class='message_links'>
                 <a href='/{{game.key.id}}'>view</a>

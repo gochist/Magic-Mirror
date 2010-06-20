@@ -1,22 +1,20 @@
 {% spaceless %}
 <div>
-    <h1>Game</h1>
-    <img src='{{game.created_by.twit_img_url}}'>
-    <p>
+    <img class='user_img' src='{{game.created_by.twit_img_url}}'>
+    <p class='twit_text'>
         <strong>{{game.created_by.twit_screen_name}}</strong>
-        {{game.subject|escape}}
-    </p>
-    <p>
-        {{game.created_time}}
-    </p>
-    <p>
-        {{game.deadline}}
+        {{game.subject|escape}} 
+        <br/>
+        <span class='deadline'>{{game.deadline|humantime}}</span>
     </p>
     {% for option_game in option_game_map %}
-    <ol>
+    <div class='game'>
         <p>
-            {{forloop.counter}}.<a href='/{{game.key.id}}/{{forloop.counter0}}'>{{option_game.0|escape}}</a>
+            <h2>{{forloop.counter}} <a href='/{{game.key.id}}/{{forloop.counter0}}'>{{option_game.0|escape}}</a></h2>
         </p>
-        {% for gamer in option_game.1 %}<img src='{{gamer.user.twit_img_url}}'>{% endfor %}
-    </ol>{% endfor %}
+        {% for gamer in option_game.1 %}
+		<img src='{{gamer.user.twit_img_url}}'>
+		{% endfor %}
+    </div>
+	{% endfor %}
 </div> {% endspaceless %}
