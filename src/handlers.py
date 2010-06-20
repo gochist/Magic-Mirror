@@ -9,7 +9,6 @@ from oauthtwitter import OAuthApi
 import oauth
 import utils
 
-
 class BaseHandler(webapp.RequestHandler):
     # cookie related functions
     def set_cookie(self, key, value, path='/',
@@ -210,8 +209,8 @@ class TimelineHandler(BaseHandler):
     def get(self):
         session = self.get_vaild_session()        
         games = GameModel.all() \
-                         .filter("deadline >", datetime.datetime.now()) \
-                         .order("-deadline") \
+                         .filter("deadline >", datetime.datetime.utcnow()) \
+                         .order("deadline") \
                          .fetch(10)
 
         game_list = ""
@@ -375,7 +374,9 @@ class MainHandler(BaseHandler):
             self.redirect('/home')
             return
         
-        games = GameModel.all().order("-deadline").fetch(10)
+        games = GameModel.all()\
+                         .filter("deadline >", datetime.datetime.utcnow())\
+                         .order("deadline").fetch(10)
         game_list = ""
         for game in games:
             game_list += self.render_module("game_preview.html",
