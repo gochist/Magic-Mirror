@@ -195,18 +195,10 @@ class TwitCallbackHandler(BaseHandler):
 
         # add user 
         user_model = utils.User()
-        # FIXME: user info
-        if not user.time_zone:
-            user.time_zone = "GMT"
-        if not user.utc_offset:
-            user.utc_offset = 0
              
-        logging.info("%s %s"%(user.time_zone, user.utc_offset))
         user_model.set(twit_id=str(user.id),
                        twit_screen_name=user.screen_name,
-                       twit_img_url=user.profile_image_url,
-                       time_zone=user.time_zone,
-                       utc_offset=user.utc_offset)
+                       twit_img_url=user.profile_image_url)
         
         # add session
         self.new_session(user_model.model, token, secret)        
@@ -298,8 +290,13 @@ class GameHandler(BaseHandler):
         twit = self.get_twitapi(session)
         user_info = twit.GetUserInfo()
         
-        utc_offset_hour = session.user.utc_offset / (3600.0)
-        tz_str = "%s(UTC%+02.1f)" % (session.user.time_zone, utc_offset_hour) 
+        if not user_info.utc_offset:
+            user_info.utc_offset = 0
+        if not user_info.time_zone :
+            user_info.time_zone = "GMT" 
+        
+        utc_offset_hour = user_info.utc_offset / (3600.0)
+        tz_str = "%s(UTC%+02.1f)" % (user_info.time_zone, utc_offset_hour) 
         
         # render page
         self.render_page(main_module='game_form.html',
@@ -319,8 +316,14 @@ class GameHandler(BaseHandler):
                      'options' : self.request.get('option',
                                                   allow_multiple=True)}
 
-        # validate form        
-        utc_offset = session.user.utc_offset
+        # get user information
+        twit = self.get_twitapi(session)
+        user_info = twit.GetUserInfo()
+                
+        # validate form
+        if user_info.utc_offset:
+            user_info.utc_offset = 0         
+        utc_offset = user_info.utc_offset
         due_date = self.request.get('due_date')
         due_time = self.request.get('due_time')
         deadline = due_date + due_time
@@ -393,8 +396,7 @@ class TestHandler(BaseHandler):
             
         user = UserModel(twit_id='15640669', twit_screen_name='gochist',
                          twit_img_url='http://a1.twimg.com/profile_images/64147960/gochist_normal.JPG',
-                         time_zone='Seoul',
-                         utc_offset=32400, score=123)
+                         score=123)
         user.put()
 
         # setting session                
