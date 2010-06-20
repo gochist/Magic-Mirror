@@ -12,11 +12,11 @@
     <p>
         {{game.deadline}}
     </p>
-    {% for option in gamers %}
+    {% for option_game in option_game_map %}
     <ol>
-        <a href='/{{game.key.id}}/{{forloop.counter0}}'>{{option|escape}}</a>
-        {{gamers|escape}}
-    </ol>
-    {% endfor %}
-</div>
-{% endspaceless %}
+        <p>
+            {{forloop.counter}}.<a href='/{{game.key.id}}/{{forloop.counter0}}'>{{option_game.0|escape}}</a>
+        </p>
+        {% for gamer in option_game.1 %}<img src='{{gamer.user.twit_img_url}}'>{% endfor %}
+    </ol>{% endfor %}
+</div> {% endspaceless %}

@@ -195,6 +195,13 @@ class TwitCallbackHandler(BaseHandler):
 
         # add user 
         user_model = utils.User()
+        # FIXME: user info
+        if not user.time_zone:
+            user.time_zone = "GMT"
+        if not user.utc_offset:
+            user.utc_offset = 0
+             
+        logging.info("%s %s"%(user.time_zone, user.utc_offset))
         user_model.set(twit_id=str(user.id),
                        twit_screen_name=user.screen_name,
                        twit_img_url=user.profile_image_url,
@@ -260,19 +267,21 @@ class GameViewHandler(BaseHandler):
         if not game:
             raise Exception
         
-        option_game_map = {}
-        for i,option in enumerate(game.options):
+        option_game_map = []
+        for i, option in enumerate(game.options):
             gamers = OptionUserMapModel.all()\
                                        .filter('game =', game)\
-                                       .filter('option_no =', i)            
-            option_game_map[option] = gamers.fetch(100)
+                                       .filter('option_no =', i)\
+                                       .fetch(100)
+            option_game_map.append((option, gamers))
+            
         
         
         self.render_page(main_module='game_view.html',
                          side_module='game_stats.html',
                          session=session,
                          game=game,
-                         gamers=option_game_map)
+                         option_game_map=option_game_map)
 
 class GameHandler(BaseHandler):
     def validate_form(self, form):
@@ -383,7 +392,7 @@ class TestHandler(BaseHandler):
             db.delete(query.fetch(1))
             
         user = UserModel(twit_id='15640669', twit_screen_name='gochist',
-                         twit_img_url='http://a1.twimg.com/profile_images/64147960/gochist_normal.JPG', 
+                         twit_img_url='http://a1.twimg.com/profile_images/64147960/gochist_normal.JPG',
                          time_zone='Seoul',
                          utc_offset=32400, score=123)
         user.put()
