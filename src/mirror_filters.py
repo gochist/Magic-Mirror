@@ -1,6 +1,14 @@
 from google.appengine.ext.webapp import template 
 from datetime import datetime, timedelta
+from math import modf
 register = template.create_template_register() 
+
+def humanround(value, threshold=0.8):
+    fraction, integer = modf(value)
+    if fraction > threshold:
+        return integer + 1
+    else :
+        return integer
 
 @register.filter 
 def humantime(value):  
@@ -26,14 +34,14 @@ def humantime(value):
     hours = abs(seconds) / SEC_TO_HOUR
     mins = abs(seconds) / SEC_TO_MIN
     
-    if round(days) > 0 :
-        ret["no"] = round(days)
+    if humanround(days) > 0 :
+        ret["no"] = humanround(days)
         ret["unit"] = "days"
-    elif round(hours) > 0:
-        ret["no"] = round(hours)
+    elif humanround(hours) > 0:
+        ret["no"] = humanround(hours)
         ret["unit"] = "hours"
-    elif round(mins) > 0:
-        ret["no"] = round(mins)
+    elif humanround(mins) > 0:
+        ret["no"] = humanround(mins)
         ret["unit"] = "minutes"
     else :
         if seconds < 0:

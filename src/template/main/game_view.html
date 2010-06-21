@@ -9,38 +9,36 @@
             {{game.deadline|humantime}}
         </span>
     </p>
-    {% for option_game in option_game_map %}
-    <div class='game'>
-        <div class='gamer_list'>
+    <ul>
+        {% for option_game in option_game_map %}
+        <ol class='gamer_list'>
             <p>
-                <h3>{{forloop.counter}} 
-                    {% if session %}
+                <strong>{{option_game.0|escape}}</strong>
+                {% if session %}{% if intime %} 
+                <span class='deadline'>
                     <a href='/{{game.key.id}}/{{forloop.counter0}}'>
-                        {{option_game.0|escape}}
+                        Join in
                     </a>
-                    {% else %}
-                    {{option_game.0|escape}}
-                    {% endif %}
-                </h3>
-            </p>
-            {% for gamer in option_game.1 %}
-            <div class='user_img'>
-                <img class='user_img2' src='{{gamer.user.twit_img_url}}'>
-                <br/>
-                <span class='img_text'>
-                    {{gamer.user.twit_screen_name}}
                 </span>
+                {% endif %}{% endif %}
+            </p>
+            <div class='gamer_img_list'>
+                {% for gamer in option_game.1 %}
+                <div class='user_img'>
+                    <img class='user_img2' src='{{gamer.user.twit_img_url}}'>
+                    <br/>
+                    <span class='img_text'>
+                        {{gamer.user.twit_screen_name}}
+                    </span>
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
-        </div>
-    </div>
-    {% endfor %}{% if session %}<hr/>
+        </ol>
+        {% endfor %}
+    </ul>{% if session %}<hr/>
     <div class='post_twit'>
-        <h2>What are you thinking about this?</h2>
+        <h2>{{session.user.twit_screen_name|title}}, what are you thinking about this?</h2>
         <form action='/{{game.key.id}}/msg' method='post'>
-            <div class='user_img'>
-                <img class='user_img' src='{{session.user.twit_img_url}}'>
-            </div>
             <div>
                 <textarea name='message'></textarea>
                 <input type='submit'>
@@ -60,6 +58,13 @@
                 <span class='deadline'>
                     {{message.created_time|humantime}}
                 </span>
+                {% ifequal message.user.key.id session.user.key.id %}
+                <span class='deadline'>
+                    <a href='/msg/{{message.key}}/delete'>
+                        delete
+                    </a>
+                </span>
+                {% endifequal %}
             </p>
         </div>
     </div>

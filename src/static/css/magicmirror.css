@@ -110,9 +110,14 @@ div.game:hover {
     border-width: 1px;
 }
 
-div.gamer_list {
+ol.gamer_list {
     float: none;
+    padding-left: 20px;
     overflow: hidden;
+}
+
+ol.gamer_list:hover {
+    background-color: #c0deed;
 }
 
 div.user_img {
@@ -127,6 +132,10 @@ div.user_img:hover {
     border: solid;
     border-width: 1px;
     border-color: #ff0000;
+}
+
+div.gamer_img_list {
+    overflow: hidden;
 }
 
 .img_text {

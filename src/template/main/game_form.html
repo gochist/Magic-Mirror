@@ -7,9 +7,9 @@
     });
     
     function add_option(){
-        text = "<input name='option' type='text'>"
-        
-        alert(text);
+        ops = document.getElementById("options");
+        text = "<div><input name='option' type='text'></div>";
+        ops.innerHTML += text;
     }
 </script>
 <div>
@@ -32,7 +32,9 @@
                 </div>
             </div>
             <div>
-                <a href='javascript:add_option()'>+ add option</a>
+                <a href='javascript:add_option()'>
+                    + add option
+                </a>
             </div>
         </div>
         <div>
@@ -41,7 +43,7 @@
                 <input id="datepicker" name='due_date' type='text'>
             </div>
             <div>
-                <select name='due_time' value='00'>
+                <select name='due_time' value='12:00PM'>
                     <option value='12:00AM'>12:00AM</option>
                     <option value='12:30AM'>12:30AM</option>
                     <option value='01:00AM'>01:00AM</option>

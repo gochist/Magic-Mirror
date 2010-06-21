@@ -215,20 +215,34 @@ class TwitCallbackHandler(BaseHandler):
 class TimelineHandler(BaseHandler):
     def get(self):
         session = self.get_vaild_session()        
+
+        def makelist(games):
+            ret = ""
+            for game in games:
+                ret += self.render_module("game_preview.html", game=game)
+            
+            return ret
+
+        # near deadline
         games = GameModel.all() \
                          .filter("deadline >", datetime.datetime.utcnow()) \
                          .order("deadline") \
                          .fetch(10)
-
-        game_list = ""
-        for game in games:
-            game_list += self.render_module("game_preview.html",
-                                            game=game)
+        near_deadline_list = makelist(games)
+        
+        # hot games
+        games = GameModel.all()\
+                         .order("-view")\
+                         .fetch(5)
+        
+        hot_game_list = makelist(games)
+        
                                            
         self.render_page(main_module='public_timeline.html',
                          side_module='introduce.html',
                          session=session,
-                         game_preview=game_list)        
+                         near_deadline=near_deadline_list,
+                         hot_games=hot_game_list)        
 
 class GameJoinHandler(BaseHandler):
     def get(self, game_id, option_no):
@@ -255,6 +269,17 @@ class GameJoinHandler(BaseHandler):
             option_map.put()
         
         self.redirect('/%s' % game_id)
+        
+class MsgDeleteHandler(BaseHandler):
+    def get(self, msg_key):
+        session = self.get_vaild_session()
+        message = db.get(msg_key)
+        game = message.game
+        
+        if session.user.key().id() == message.user.key().id():
+            message.delete()
+        
+        self.redirect("/%s" % game.key().id())        
 
 class GameViewHandler(BaseHandler):
     def get(self, game_id):
@@ -287,12 +312,19 @@ class GameViewHandler(BaseHandler):
         return_url_param = "?" + urllib.urlencode({'return_url': 
                                                    "/%s" % game.key().id()})
         
+        
+        intime = game.deadline > datetime.datetime.utcnow()
+        
+        game.view = game.view + 1
+        game.put()
+        
         self.render_page(main_module='game_view.html',
                          side_module='game_stats.html',
                          session=session,
                          game=game,
                          messages=messages,
                          option_game_map=option_game_map,
+                         intime=intime,
                          return_url_param=return_url_param)
     
     def post(self, game_id, mode):
@@ -412,20 +444,11 @@ class MainHandler(BaseHandler):
             self.redirect('/home')
             return
         
-        games = GameModel.all()\
-                         .filter("deadline >", datetime.datetime.utcnow())\
-                         .order("deadline").fetch(10)
-                         
-        game_list = ""
-        for game in games:
-            game_list += self.render_module("game_preview.html",
-                                            game=game)
-        
-        # render page
-        self.render_page(main_module='public_timeline.html',
-                         side_module='introduce.html',
-                         session=session,
-                         game_preview=game_list)
+        else :
+            self.redirect('/timeline')
+            return
+
+
        
 class TestHandler(BaseHandler):
     def get(self):
