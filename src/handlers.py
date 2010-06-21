@@ -227,7 +227,7 @@ class TimelineHandler(BaseHandler):
         games = GameModel.all() \
                          .filter("deadline >", datetime.datetime.utcnow()) \
                          .order("deadline") \
-                         .fetch(10)
+                         .fetch(5)
         near_deadline_list = makelist(games)
         
         # hot games
