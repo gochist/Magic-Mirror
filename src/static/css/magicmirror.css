@@ -46,6 +46,12 @@ div.top_menu {
     background-color: #FFFFFF;
 }
 
+a.top_menu {
+    float: left;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
 div.signin_with_twitter {
     text-align: right;
     float: right;
@@ -110,14 +116,51 @@ div.game:hover {
     border-width: 1px;
 }
 
-ol.gamer_list {
-    float: none;
-    padding-left: 20px;
+ul.option {
+    margin: 0px;
+    padding: 0px;
+}
+
+h2.game_text {
+    background-color: #a6d0e3;
+    padding: 5px;
+    margin: 1px;
+}
+
+h3.answer {
+    background-color: #c0deed;
+    padding: 5px;
+    margin: 1px;
+}
+
+div.messages {
+    border: dotted;
+    border-width: 1px 0px 0px 0px;
+    border-color: #aaaaaa;
+    padding: 0px;
+    margin-top: 20px;
+}
+
+div.message {
     overflow: hidden;
 }
 
-ol.gamer_list:hover {
-    background-color: #c0deed;
+div.message_links {
+    float: right;
+}
+
+div.game_view {
+    overflow: hidden;
+}
+
+li.gamer_list {
+    float: none;
+    margin-left: 20px;
+    overflow: hidden;
+}
+
+li.gamer_list:hover {
+    background-color: #ddeef6;
 }
 
 div.user_img {
@@ -166,14 +209,6 @@ p.twit_text {
 ul.game_list {
     margin: auto;
     padding: 0px;
-}
-
-div.message {
-    overflow: hidden;
-}
-
-div.message_links {
-    float: right;
 }
 
 h2 {

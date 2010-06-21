@@ -1,72 +1,66 @@
 {% spaceless %}
 <div>
-    <img class='user_img' src='{{game.created_by.twit_img_url}}'>
-    <p class='twit_text'>
-        <strong>{{game.created_by.twit_screen_name}}</strong>
-        {{game.subject|escape}} 
-        <br/>
-        <span class='deadline'>
-            {{game.deadline|humantime}}
-        </span>
-    </p>
-    <ul>
-        {% for option_game in option_game_map %}
-        <ol class='gamer_list'>
-            <p>
-                <strong>{{option_game.0|escape}}</strong>
-                {% if session %}{% if intime %} 
-                <span class='deadline'>
-                    <a href='/{{game.key.id}}/{{forloop.counter0}}'>
-                        Join in
-                    </a>
-                </span>
-                {% endif %}{% endif %}
-            </p>
-            <div class='gamer_img_list'>
-                {% for gamer in option_game.1 %}
-                <div class='user_img'>
-                    <img class='user_img2' src='{{gamer.user.twit_img_url}}'>
-                    <br/>
-                    <span class='img_text'>
-                        {{gamer.user.twit_screen_name}}
+    <div class='game_view round'>
+        <h2 class='game_text round'>{{game.subject|escape}} </h2>
+        <ul class='option'>
+            {% for option_game in option_game_map %}
+            <li class='gamer_list round'>
+                <h3 class='answer round'><strong>{{option_game.0|escape}}</strong> {% if session %}{% if intime %} 
+                    <span class='deadline'>
+                        <a href='/{{game.key.id}}/{{forloop.counter0}}'>
+                            Join in
+                        </a>
                     </span>
+                    {% endif %}{% endif %}
+                </h3>
+                <div class='gamer_img_list'>
+                    {% for gamer in option_game.1 %}
+                    <div class='user_img'>
+                        <img class='user_img2' src='{{gamer.user.twit_img_url}}'>
+                        <br/>
+                        <span class='img_text'>
+                            {{gamer.user.twit_screen_name}}
+                        </span>
+                    </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
-            </div>
-        </ol>
-        {% endfor %}
-    </ul>{% if session %}<hr/>
-    <div class='post_twit'>
-        <h2>{{session.user.twit_screen_name|title}}, what are you thinking about this?</h2>
-        <form action='/{{game.key.id}}/msg' method='post'>
-            <div>
-                <textarea name='message'></textarea>
-                <input type='submit'>
-                </input>
-            </div>
-        </form>
-    </div>{% endif %}<hr/>{% for message in messages %}
-    <div class='message_list'>
-        <div class='message'>
-            <div>
-                <img class='user_img' src='{{message.user.twit_img_url}}'>
-            </div>
-            <p class='twit_text'>
-                <strong>{{message.user.twit_screen_name}}</strong>
-                {{message.text|escape}}
-                <br/>
-                <span class='deadline'>
-                    {{message.created_time|humantime}}
-                </span>
-                {% ifequal message.user.key.id session.user.key.id %}
-                <span class='deadline'>
-                    <a href='/msg/{{message.key}}/delete'>
-                        delete
-                    </a>
-                </span>
-                {% endifequal %}
-            </p>
-        </div>
+            </li>
+            {% endfor %}
+        </ul>{% if session %}
     </div>
-    {% endfor %}
+    <div class='messages'>
+        <div class='post_twit'>
+            <h3 class='round'>{{session.user.twit_screen_name|title}}, what are you thinking about this?</h3>
+            <form action='/{{game.key.id}}/msg' method='post'>
+                <div>
+                    <textarea name='message'></textarea>
+                    <input type='submit'>
+                    </input>
+                </div>
+            </form>
+        </div>{% endif %}{% for message in messages %}
+        <div class='message_list'>
+            <div class='game'>
+                <div>
+                    <img class='user_img' src='{{message.user.twit_img_url}}'>
+                </div>
+                <p class='twit_text'>
+                    <strong>{{message.user.twit_screen_name}}</strong>
+                    {{message.text|escape}}
+                    <br/>
+                    <span class='deadline'>
+                        {{message.created_time|humantime}}
+                    </span>
+                    {% ifequal message.user.key.id session.user.key.id %}
+                    <span class='deadline'>
+                        <a href='/msg/{{message.key}}/delete'>
+                            delete
+                        </a>
+                    </span>
+                    {% endifequal %}
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>{% endspaceless %}
