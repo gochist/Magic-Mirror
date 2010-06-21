@@ -1,5 +1,4 @@
-{% spaceless %}
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+{% spaceless %} <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
     <head>
         <title>Magic Mirror (alpha)</title>
@@ -20,14 +19,24 @@
                 </div>
                 {% if session %}
                 <div class='top_menu round'>
-                    <a href='/home'>Home</a>
-                    <a href='/timeline'>Public Timeline</a>
-                    <a href='/game/new'>Post</a>
-                    <a href='/oauth/twitter/signout'>Sign out</a>
+                    <a href='/home'>
+                        Home
+                    </a>
+                    <a href='/timeline'>
+                        Public Timeline
+                    </a>
+                    <a href='/game/new'>
+                        Post
+                    </a>
+                    <a href='/oauth/twitter/signout'>
+                        Sign out
+                    </a>
                 </div>
                 {% else %}
                 <div class='signin_with_twitter'>
-                    <a href='/oauth/twitter/signin'><img src='/static/img/sign-in-with-twitter.png'/></a>
+                    <a href='/oauth/twitter/signin{{return_url_param}}'>
+                        <img src='/static/img/sign-in-with-twitter.png'/>
+                    </a>
                 </div>{% endif %}
             </div>
             <div class='bubble'>

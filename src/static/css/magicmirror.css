@@ -105,15 +105,47 @@ div.game:hover {
     padding-right: 2px;
     padding-bottom: 2px;
     border: dotted;
-	background-color: #c0deed;
-	border-color: #FFCCCC;
+    background-color: #c0deed;
+    border-color: #FFCCCC;
     border-width: 1px;
 }
 
-img.user_img {
-    margin: 1px;
-	margin-right: 12px;
+div.gamer_list {
+    float: none;
+    overflow: hidden;
+}
+
+div.user_img {
+    padding: 2px 1px 1px 1px;
     float: left;
+    text-align: center;
+}
+
+div.user_img:hover {
+    padding: 1px 0px 0px 0px;
+    /*background-color: #b0cedd;*/
+    border: solid;
+    border-width: 1px;
+    border-color: #ff0000;
+}
+
+.img_text {
+    font-size: small;
+    color: #444444;
+    margin: 0px;
+    paddin: 0px;
+}
+
+img.user_img {
+    margin: 0px;
+    margin-right: 12px;
+    float: left;
+}
+
+img.user_img2 {
+    margin-left: 10px;
+    margin-right: 10px;
+    text-align: center;
 }
 
 p.twit_text {
@@ -141,6 +173,6 @@ h2 {
 }
 
 span.deadline {
-	font-size: small;
-	color: #999999;
+    font-size: small;
+    color: #999999;
 }

@@ -1,4 +1,4 @@
-#Wed Jun 16 19:58:20 KST 2010
+#Mon Jun 21 10:52:51 KST 2010
 com.aptana.ide.editors.codeassist.formatter.alignment_for_multiple_fields=1
 com.aptana.ide.editors.codeassist.formatter.blank_lines_before_imports=5
 com.aptana.ide.editors.codeassist.formatter.blank_lines_before_method=1
@@ -21,7 +21,7 @@ com.aptana.ide.editors.codeassist.formatter.insert_new_line_before_if_statement=
 com.aptana.ide.editors.codeassist.formatter.insert_new_line_before_return_statement=insert
 com.aptana.ide.editors.codeassist.formatter.insert_new_line_before_while_in_do_statement=insert
 com.aptana.ide.editors.codeassist.formatter.insert_new_line_in_empty_enum_declaration=doctype,br,link,meta,
-com.aptana.ide.editors.codeassist.formatter.insert_new_line_in_empty_type_declaration=a,b,em,h1,h2,h3,h4,h5,h6,i,option,span,strong,textarea,title,
+com.aptana.ide.editors.codeassist.formatter.insert_new_line_in_empty_type_declaration=b,em,h1,h2,h3,h4,h5,h6,i,option,strong,textarea,title,
 com.aptana.ide.editors.codeassist.formatter.insert_space_after_and_in_type_parameter=
 com.aptana.ide.editors.codeassist.formatter.insert_space_after_closing_brace_in_block=false
 com.aptana.ide.editors.codeassist.formatter.insert_space_between_empty_parens_in_annotation_type_member_declaration=false

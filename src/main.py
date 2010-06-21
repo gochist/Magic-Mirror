@@ -9,6 +9,7 @@ def main():
     url_mapping = [('/', MainHandler),
                    ('/home', HomeHandler),
                    ('/([0-9]*)', GameViewHandler),
+                   ('/([0-9]*)/(msg)', GameViewHandler),
                    ('/([0-9]*)/([0-9]*)', GameJoinHandler),
                    ('/oauth/twitter/signin', TwitSigninHandler),
                    ('/oauth/twitter/signout', TwitSignoutHandler),

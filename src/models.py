@@ -11,6 +11,7 @@ class UserModel(db.Model):
 class OAuthRequestToken(db.Model):
     token = db.StringProperty()
     secret = db.StringProperty()
+    return_url = db.StringProperty(default='/')
     created = db.DateTimeProperty(auto_now_add=True)
     
 class SessionModel(db.Model):
@@ -34,3 +35,11 @@ class OptionUserMapModel(db.Model):
     option_no = db.IntegerProperty(required=True)
     created_time = db.DateTimeProperty(auto_now_add=True)
     modified_time = db.DateTimeProperty(auto_now=True)
+    
+
+class MessageModel(db.Model):
+    user = db.ReferenceProperty(UserModel, required=True)
+    game = db.ReferenceProperty(GameModel, required=True)
+    text = db.StringProperty(required=True)
+    created_time = db.DateTimeProperty(auto_now_add=True)
+    

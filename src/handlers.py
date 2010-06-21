@@ -8,6 +8,7 @@ import config, os, datetime
 from oauthtwitter import OAuthApi
 import oauth
 import utils
+import urllib
 
 class BaseHandler(webapp.RequestHandler):
     # cookie related functions
@@ -131,9 +132,14 @@ class TwitSigninHandler(BaseHandler):
             self.redirect("/?msg=error")
             return
         
+        
+        # return url control
+        return_url = urllib.unquote(self.request.get('return_url'))
+        
         # insert request token into DB
         req_token_model = OAuthRequestToken(token=req_token.key,
-                                            secret=req_token.secret)
+                                            secret=req_token.secret,
+                                            return_url=return_url)
         req_token_model.put()
         
         
@@ -169,6 +175,7 @@ class TwitCallbackHandler(BaseHandler):
         
         # model to object
         req_token_obj = oauth.OAuthToken(req_token.token, req_token.secret)
+        return_url = req_token.return_url
         
         # get access token
         twit = OAuthApi(access_token=req_token_obj)
@@ -203,7 +210,7 @@ class TwitCallbackHandler(BaseHandler):
         self.new_session(user_model.model, token, secret)        
         
         # redirect to home
-        self.redirect('/home')
+        self.redirect(return_url)
 
 class TimelineHandler(BaseHandler):
     def get(self):
@@ -251,9 +258,10 @@ class GameJoinHandler(BaseHandler):
 
 class GameViewHandler(BaseHandler):
     def get(self, game_id):
+        game_id = int(game_id)
+
         session = self.get_vaild_session()
-        
-        game = GameModel.get_by_id(int(game_id))
+        game = GameModel.get_by_id(game_id)
         # FIXME:
         if not game:
             raise Exception
@@ -263,17 +271,47 @@ class GameViewHandler(BaseHandler):
             gamers = OptionUserMapModel.all()\
                                        .filter('game =', game)\
                                        .filter('option_no =', i)\
+                                       .order('modified_time')\
                                        .fetch(100)
             option_game_map.append((option, gamers))
             
-        
+        query = MessageModel.all()\
+                            .filter('game =', game)\
+                            .order('-created_time')
+                            
+        if query.count() > 0 :                                
+            messages = query.fetch(100)
+        else :
+            messages = []
+            
+        return_url_param = "?" + urllib.urlencode({'return_url': 
+                                                   "/%s" % game.key().id()})
         
         self.render_page(main_module='game_view.html',
                          side_module='game_stats.html',
                          session=session,
                          game=game,
-                         option_game_map=option_game_map)
-
+                         messages=messages,
+                         option_game_map=option_game_map,
+                         return_url_param=return_url_param)
+    
+    def post(self, game_id, mode):
+        game_id = int(game_id)
+        session = self.get_vaild_session()
+        game = GameModel.get_by_id(game_id)
+        
+        if (not session) or (not game):
+            self.redirect('/%d' % game_id)   
+            return
+        
+        if mode == 'msg':
+            message = MessageModel(user=session.user, game=game,
+                                   text=self.request.get('message'))
+            message.put()
+            self.redirect('/%d' % game_id)
+            return
+        
+            
 class GameHandler(BaseHandler):
     def validate_form(self, form):
         # TODO: implement this
@@ -377,6 +415,7 @@ class MainHandler(BaseHandler):
         games = GameModel.all()\
                          .filter("deadline >", datetime.datetime.utcnow())\
                          .order("deadline").fetch(10)
+                         
         game_list = ""
         for game in games:
             game_list += self.render_module("game_preview.html",

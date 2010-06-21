@@ -5,16 +5,63 @@
         <strong>{{game.created_by.twit_screen_name}}</strong>
         {{game.subject|escape}} 
         <br/>
-        <span class='deadline'>{{game.deadline|humantime}}</span>
+        <span class='deadline'>
+            {{game.deadline|humantime}}
+        </span>
     </p>
     {% for option_game in option_game_map %}
     <div class='game'>
-        <p>
-            <h2>{{forloop.counter}} <a href='/{{game.key.id}}/{{forloop.counter0}}'>{{option_game.0|escape}}</a></h2>
-        </p>
-        {% for gamer in option_game.1 %}
-		<img src='{{gamer.user.twit_img_url}}'>
-		{% endfor %}
+        <div class='gamer_list'>
+            <p>
+                <h3>{{forloop.counter}} 
+                    {% if session %}
+                    <a href='/{{game.key.id}}/{{forloop.counter0}}'>
+                        {{option_game.0|escape}}
+                    </a>
+                    {% else %}
+                    {{option_game.0|escape}}
+                    {% endif %}
+                </h3>
+            </p>
+            {% for gamer in option_game.1 %}
+            <div class='user_img'>
+                <img class='user_img2' src='{{gamer.user.twit_img_url}}'>
+                <br/>
+                <span class='img_text'>
+                    {{gamer.user.twit_screen_name}}
+                </span>
+            </div>
+            {% endfor %}
+        </div>
     </div>
-	{% endfor %}
-</div> {% endspaceless %}
+    {% endfor %}{% if session %}<hr/>
+    <div class='post_twit'>
+        <h2>What are you thinking about this?</h2>
+        <form action='/{{game.key.id}}/msg' method='post'>
+            <div class='user_img'>
+                <img class='user_img' src='{{session.user.twit_img_url}}'>
+            </div>
+            <div>
+                <textarea name='message'></textarea>
+                <input type='submit'>
+                </input>
+            </div>
+        </form>
+    </div>{% endif %}<hr/>{% for message in messages %}
+    <div class='message_list'>
+        <div class='message'>
+            <div>
+                <img class='user_img' src='{{message.user.twit_img_url}}'>
+            </div>
+            <p class='twit_text'>
+                <strong>{{message.user.twit_screen_name}}</strong>
+                {{message.text|escape}}
+                <br/>
+                <span class='deadline'>
+                    {{message.created_time|humantime}}
+                </span>
+            </p>
+        </div>
+    </div>
+    {% endfor %}
+</div>{% endspaceless %}
