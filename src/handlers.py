@@ -340,8 +340,11 @@ class GameViewHandler(BaseHandler):
             return
         
         if mode == 'msg':
+            text = self.request.get('message') \
+                               .replace('\r', '') \
+                               .replace('\n', '')
             message = MessageModel(user=session.user, game=game,
-                                   text=self.request.get('message'))
+                                   text=text)
             message.put()
             self.redirect('/%d' % game_id)
             return
