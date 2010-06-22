@@ -1,0 +1,18 @@
+{% spaceless %}<h2 class='space round'>Game Stats</h2>
+<div class='space round'>
+    {% ifequal session.user.key.id game.created_by.key.id %}
+    <p>
+        Hello, <strong>{{session.user.twit_screen_name}}</strong>. You are the host of this game.
+    </p>
+    {% else %}
+    <p>
+        <img class='user_img' src='{{game.created_by.twit_img_url}}'>This game is posted by <strong>{{game.created_by.twit_screen_name}}</strong>
+        {{game.created_time|humantime}}.
+    </p>
+    {% endifequal %}
+    <p>
+        <strong>{{game.deadline|humantime}}</strong>
+        to close this game. 
+    </p>
+</div>
+{% endspaceless %}

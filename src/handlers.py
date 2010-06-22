@@ -114,6 +114,14 @@ class BaseHandler(webapp.RequestHandler):
         ret = template.render(page_path, page_dict)
         self.response.out.write(ret)
         
+        
+    def makelist(self, games):
+        ret = ""
+        for game in games:
+            ret += self.render_module("game_preview.html", game=game)
+        
+        return ret
+        
 
 class TwitSigninHandler(BaseHandler):
     def get(self):
@@ -210,32 +218,27 @@ class TwitCallbackHandler(BaseHandler):
         self.new_session(user_model.model, token, secret)        
         
         # redirect to home
+        if not return_url:
+            return_url = '/' 
         self.redirect(return_url)
 
 class TimelineHandler(BaseHandler):
     def get(self):
         session = self.get_vaild_session()        
 
-        def makelist(games):
-            ret = ""
-            for game in games:
-                ret += self.render_module("game_preview.html", game=game)
-            
-            return ret
-
         # near deadline
         games = GameModel.all() \
                          .filter("deadline >", datetime.datetime.utcnow()) \
                          .order("deadline") \
                          .fetch(5)
-        near_deadline_list = makelist(games)
+        near_deadline_list = self.makelist(games)
         
         # hot games
         games = GameModel.all()\
                          .order("-view")\
                          .fetch(5)
         
-        hot_game_list = makelist(games)
+        hot_game_list = self.makelist(games)
         
                                            
         self.render_page(main_module='public_timeline.html',
@@ -409,7 +412,8 @@ class GameHandler(BaseHandler):
         game = GameModel(subject=page_dict['subject'],
                          options=page_dict['options'],
                          deadline=page_dict['deadline'],
-                         created_by=session.user)
+                         created_by=session.user,
+                         result= -1)
         game.put()
         self.redirect("/%s" % game.key().id())
         
@@ -428,13 +432,35 @@ class HomeHandler(BaseHandler):
         except DownloadError:
             self.redirect("/?msg=error")
             return
-           
+
+        joined_games = ""
+        maps = OptionUserMapModel.all()\
+                                 .filter("user =", session.user)
+                                 
+                                 
+        if maps.count() > 0:
+            games = [game.game for game in maps.order("-modified_time").fetch(10)]
+            joined_games = self.makelist(games)           
+
+        # hosted by me
+        hosted_games = ""
+        games = GameModel.all()\
+                         .filter("created_by =", session.user)
+                         
+                         
+        if games.count() > 0:
+            games = games.order("-modified_time").fetch(10)
+            hosted_games = self.makelist(games)
         
         # render page
         self.render_page(main_module='user_home.html',
                          side_module='user_stats.html',
                          session=session,
+                         joined_games=joined_games,
+                         hosted_games=hosted_games,
                          user=user_info)
+        
+
        
 
 class MainHandler(BaseHandler):

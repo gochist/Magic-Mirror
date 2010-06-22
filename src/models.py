@@ -29,6 +29,7 @@ class GameModel(db.Model):
     created_time = db.DateTimeProperty(auto_now_add=True)
     modified_time = db.DateTimeProperty(auto_now=True)
     view = db.IntegerProperty(default=0)
+    result = db.IntegerProperty(default=-1)
 
 class OptionUserMapModel(db.Model):
     user = db.ReferenceProperty(UserModel, required=True)

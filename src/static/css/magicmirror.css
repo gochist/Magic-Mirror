@@ -121,23 +121,43 @@ ul.option {
     padding: 0px;
 }
 
-h2.game_text {
+textarea.twit {
+    width: 490px;
+}
+
+.blue {
+    background-color: #c0deed;
+}
+
+div.post_twit {
+}
+
+h2 {
     background-color: #a6d0e3;
+    border: solid;
+    border-width: 1px;
+    border-color: #444444;
+}
+
+.space {
     padding: 5px;
     margin: 1px;
+}
+
+.solid {
+    border: solid;
+    border-width: 1px;
+    border-color: #444444;
+}
+
+h3 {
+    background-color: #c0deed;
 }
 
 h3.answer {
-    background-color: #c0deed;
-    padding: 5px;
-    margin: 1px;
 }
 
 div.messages {
-    border: dotted;
-    border-width: 1px 0px 0px 0px;
-    border-color: #aaaaaa;
-    padding: 0px;
     margin-top: 20px;
 }
 

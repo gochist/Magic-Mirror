@@ -1,11 +1,11 @@
 {% spaceless %}
 <div>
     <div class='game_view round'>
-        <h2 class='game_text round'>{{game.subject|escape}} </h2>
+        <h2 class='space round'>{{game.subject|escape}} </h2>
         <ul class='option'>
             {% for option_game in option_game_map %}
             <li class='gamer_list round'>
-                <h3 class='answer round'><strong>{{option_game.0|escape}}</strong> {% if session %}{% if intime %} 
+                <h3 class='space round'><strong>{{option_game.0|escape}}</strong> {% if session %}{% if intime %} 
                     <span class='deadline'>
                         <a href='/{{game.key.id}}/{{forloop.counter0}}'>
                             Join in
@@ -29,15 +29,16 @@
         </ul>{% if session %}
     </div>
     <div class='messages'>
-        <div class='post_twit'>
-            <h3 class='round'>{{session.user.twit_screen_name|title}}, what are you thinking about this?</h3>
-            <form action='/{{game.key.id}}/msg' method='post'>
-                <div>
-                    <textarea name='message'></textarea>
-                    <input type='submit'>
-                    </input>
-                </div>
-            </form>
+        <div class='post_twit round'>
+            <h2 class='space round'>{{session.user.twit_screen_name|title}}, what are you thinking about this?
+                <form action='/{{game.key.id}}/msg' method='post'>
+                    <div class='blue round'>
+                        <textarea class='twit' name='message'></textarea>
+                        <input type='submit'>
+                        </input>
+                    </div>
+                </form>
+            </h2>
         </div>{% endif %}{% for message in messages %}
         <div class='message_list'>
             <div class='game'>

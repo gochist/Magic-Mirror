@@ -10,6 +10,28 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
+- kind: GameModel
+  properties:
+  - name: created_by
+  - name: modified_time
+
+- kind: GameModel
+  properties:
+  - name: created_by
+  - name: modified_time
+    direction: desc
+
+- kind: GameModel
+  properties:
+  - name: created_by
+  - name: result
+
+- kind: GameModel
+  properties:
+  - name: created_by
+  - name: result
+  - name: modified_time
+
 - kind: MessageModel
   properties:
   - name: game
@@ -26,3 +48,14 @@ indexes:
   - name: game
   - name: option_no
   - name: modified_time
+
+- kind: OptionUserMapModel
+  properties:
+  - name: user
+  - name: modified_time
+
+- kind: OptionUserMapModel
+  properties:
+  - name: user
+  - name: modified_time
+    direction: desc
