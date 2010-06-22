@@ -7,7 +7,7 @@
             <li class='gamer_list round'>
                 <h3 class='space round'><strong>{{option_game.0|escape}}</strong> {% if session %}{% if intime %} 
                     <span class='deadline'>
-                        <a href='/{{game.key.id}}/{{forloop.counter0}}'>
+                        <a href='/{{game.key.id}}/{{option_game.2}}'>
                             Join in
                         </a>
                     </span>
@@ -26,9 +26,10 @@
                 </div>
             </li>
             {% endfor %}
-        </ul>{% if session %}
+        </ul>
     </div>
     <div class='messages'>
+        {% if session %}
         <div class='post_twit round'>
             <h2 class='space round'>{{session.user.twit_screen_name|title}}, what are you thinking about this?
                 <form action='/{{game.key.id}}/msg' method='post'>
@@ -38,7 +39,9 @@
                     </div>
                 </form>
             </h2>
-        </div>{% endif %}{% for message in messages %}
+        </div>
+		{% endif %}
+        {% for message in messages %}
         <div class='message_list'>
             <div class='game'>
                 <div>

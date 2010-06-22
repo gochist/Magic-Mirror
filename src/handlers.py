@@ -301,7 +301,7 @@ class GameViewHandler(BaseHandler):
                                        .filter('option_no =', i)\
                                        .order('modified_time')\
                                        .fetch(100)
-            option_game_map.append((option, gamers))
+            option_game_map.append((option, gamers, i))
             
         query = MessageModel.all()\
                             .filter('game =', game)\
