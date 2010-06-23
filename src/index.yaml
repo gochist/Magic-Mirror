@@ -59,3 +59,9 @@ indexes:
   - name: user
   - name: modified_time
     direction: desc
+
+- kind: ScoreModel
+  properties:
+  - name: user
+  - name: created_time
+    direction: desc

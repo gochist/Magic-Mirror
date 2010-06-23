@@ -41,6 +41,7 @@ class ScoreModel(db.Model):
     final_score = db.FloatProperty(required=True)
     created_time = db.DateTimeProperty(auto_now_add=True)
 
+
 class OptionUserMapModel(db.Model):
     user = db.ReferenceProperty(UserModel, required=True)
     game = db.ReferenceProperty(GameModel, required=True)

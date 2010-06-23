@@ -265,15 +265,41 @@ class GameResultHandler(BaseHandler):
         winners = [map.user for map in maps if map.option_no == option_no]
         losers = [map.user for map in maps if map.option_no != option_no]
         
-        logging.info(winners)
-        logging.info(losers) 
-
         if winners :
-            score = len(losers) / len(winners)
+            score = float(len(losers)) / len(winners)
         else:
-            score = 0
-        
-        logging.info("score = %d"%score)
+            score = 0.0
+            
+        # set score
+        for winner in winners:
+            final_score = 0.0
+            # get final score
+            query = ScoreModel.all().filter('user =', winner)\
+                                    .order('-created_time')
+            if query.count() > 0:
+                final_score = query.fetch(1)[0].final_score
+                                    
+            winner_score = ScoreModel(user=winner, game=game, score=score,
+                                      final_score=final_score + score)
+            winner_score.put()
+
+
+        # set score
+        for loser in losers:
+            final_score = 0.0
+            # get final score
+            query = ScoreModel.all().filter('user =', loser)\
+                                    .order('-created_time')
+            if query.count() > 0:
+                final_score = query.fetch(1)[0].final_score
+                                    
+            winner_score = ScoreModel(user=loser, game=game, score= -1.0,
+                                      final_score=final_score - 1.0)
+            winner_score.put()
+            
+        # set game
+        game.result = option_no
+        game.put()
 
         
         self.redirect('/%s' % game_id)
