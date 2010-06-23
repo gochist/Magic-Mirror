@@ -30,6 +30,16 @@ class GameModel(db.Model):
     modified_time = db.DateTimeProperty(auto_now=True)
     view = db.IntegerProperty(default=0)
     result = db.IntegerProperty(default=-1)
+    
+    def has_result(self):
+        return self.result != -1
+
+class ScoreModel(db.Model):
+    user = db.ReferenceProperty(UserModel, required=True)
+    game = db.ReferenceProperty(GameModel, required=True)
+    score = db.FloatProperty(required=True)
+    final_score = db.FloatProperty(required=True)
+    created_time = db.DateTimeProperty(auto_now_add=True)
 
 class OptionUserMapModel(db.Model):
     user = db.ReferenceProperty(UserModel, required=True)
@@ -37,7 +47,6 @@ class OptionUserMapModel(db.Model):
     option_no = db.IntegerProperty(required=True)
     created_time = db.DateTimeProperty(auto_now_add=True)
     modified_time = db.DateTimeProperty(auto_now=True)
-    
 
 class MessageModel(db.Model):
     user = db.ReferenceProperty(UserModel, required=True)

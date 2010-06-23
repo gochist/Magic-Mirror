@@ -11,8 +11,11 @@
     </p>
     {% endifequal %}
     <p>
-        <strong>{{game.deadline|humantime}}</strong>
-        to close this game. 
+        {% if intime %}<strong>{{game.deadline|humantime}}</strong>
+        to close this game.
+        {% else %} 
+        This game closed <strong>{{game.deadline|humantime}}</strong>
+        {% endif %} 
     </p>
 </div>
 {% endspaceless %}

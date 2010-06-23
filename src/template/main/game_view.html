@@ -1,18 +1,14 @@
 {% spaceless %}
+{% comment %}
+this template is for MagicMirror game view page.
+{% endcomment %}
 <div>
     <div class='game_view round'>
         <h2 class='space round'>{{game.subject|escape}} </h2>
         <ul class='option'>
             {% for option_game in option_game_map %}
             <li class='gamer_list round'>
-                <h3 class='space round'><strong>{{option_game.0|escape}}</strong> {% if session %}{% if intime %} 
-                    <span class='deadline'>
-                        <a href='/{{game.key.id}}/{{forloop.counter0}}'>
-                            Join in
-                        </a>
-                    </span>
-                    {% endif %}{% endif %}
-                </h3>
+                <h3 class='space round'><strong>{{option_game.0|escape}}</strong></h3>
                 <div class='gamer_img_list'>
                     {% for gamer in option_game.1 %}
                     <div class='user_img'>
@@ -24,6 +20,18 @@
                     </div>
                     {% endfor %}
                 </div>
+                {% if session and intime%} 
+                <a class='small right' href='/{{game.key.id}}/{{forloop.counter0}}'>
+                    Join in
+                </a>
+                {% endif %} 
+                {% if session and not intime and not game.has_result %}
+                {% ifequal session.user.key.id game.created_by.key.id %}
+                <a class='small right' href='/{{game.key.id}}/{{forloop.counter0}}/set_result'>
+                    set it to the final result
+                </a>
+                {% endifequal %}
+                {% endif %}
             </li>
             {% endfor %}
         </ul>{% if session %}

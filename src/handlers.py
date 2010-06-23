@@ -247,6 +247,38 @@ class TimelineHandler(BaseHandler):
                          near_deadline=near_deadline_list,
                          hot_games=hot_game_list)        
 
+class GameResultHandler(BaseHandler):
+    def get(self, game_id, option_no):
+        game_id = int(game_id)
+        option_no = int(option_no)
+        
+        session = self.get_vaild_session()
+        if not session:
+            self.redirect('/%s' % game_id)
+            return
+        
+        game = GameModel.get_by_id(game_id)
+
+        maps = OptionUserMapModel.all()\
+                                 .filter('game =', game)
+
+        winners = [map.user for map in maps if map.option_no == option_no]
+        losers = [map.user for map in maps if map.option_no != option_no]
+        
+        logging.info(winners)
+        logging.info(losers) 
+
+        if winners :
+            score = len(losers) / len(winners)
+        else:
+            score = 0
+        
+        logging.info("score = %d"%score)
+
+        
+        self.redirect('/%s' % game_id)
+        
+
 class GameJoinHandler(BaseHandler):
     def get(self, game_id, option_no):
         game_id = int(game_id)
@@ -387,10 +419,12 @@ class GameHandler(BaseHandler):
             self.redirect('/')
             return
         
-        page_dict = {'subject' :self.request.get('subject').strip(),
-                     'options' : self.request.get('option',
-                                                  allow_multiple=True)}
-
+        page_dict = {'subject' :self.request.get('subject').strip()}
+        page_dict['options'] = [line.strip() for line 
+                                             in self.request.get('option')\
+                                                            .strip()\
+                                                            .splitlines() 
+                                             if line]
         # get user information
         twit = self.get_twitapi(session)
         user_info = twit.GetUserInfo()

@@ -240,3 +240,17 @@ span.deadline {
     font-size: small;
     color: #999999;
 }
+
+.small {
+    font-size: small;
+}
+
+.small_gray {
+    font-size: small;
+    color: #999999;
+}
+
+.right {
+    float: right;
+    overflow: hidden;
+}
