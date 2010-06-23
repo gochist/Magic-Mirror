@@ -34,9 +34,10 @@ this template is for MagicMirror game view page.
                 {% endif %}
             </li>
             {% endfor %}
-        </ul>{% if session %}
+        </ul>
     </div>
     <div class='messages'>
+        {% if session %}
         <div class='post_twit round'>
             <h2 class='space round'>{{session.user.twit_screen_name|title}}, what are you thinking about this?
                 <form action='/{{game.key.id}}/msg' method='post'>
@@ -46,7 +47,9 @@ this template is for MagicMirror game view page.
                     </div>
                 </form>
             </h2>
-        </div>{% endif %}{% for message in messages %}
+        </div>
+		{% endif %}
+        {% for message in messages %}
         <div class='message_list'>
             <div class='game'>
                 <div>
