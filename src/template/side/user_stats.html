@@ -1,0 +1,17 @@
+<h2 class='space round'>User Stats</h2>
+<div class='space round'>
+    <img class='user_img' src='{{session.user.twit_img_url}}'/>
+    <p>
+        <strong>{{session.user.twit_screen_name}}</strong>
+    </p>
+    {% for score in scores %} 
+    {% if forloop.first %} 
+    <p>
+        {% endif %}
+        {{score.score}}
+        <br/>
+        {%if forloop.last %}
+    </p>
+    {% endif %}
+    {% endfor %}
+</div>

@@ -254,3 +254,7 @@ span.deadline {
     float: right;
     overflow: hidden;
 }
+
+.pink-back{
+	background-color: #ff8f8f;
+}

@@ -62,6 +62,17 @@ indexes:
 
 - kind: ScoreModel
   properties:
+  - name: game
+  - name: score
+
+- kind: ScoreModel
+  properties:
+  - name: game
+  - name: score
+    direction: desc
+
+- kind: ScoreModel
+  properties:
   - name: user
   - name: created_time
     direction: desc

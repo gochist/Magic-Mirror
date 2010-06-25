@@ -12,10 +12,17 @@
     {% endifequal %}
     <p>
         {% if intime %}<strong>{{game.deadline|humantime}}</strong>
-        to close this game.
-        {% else %} 
+        to close this game. 
+        {% else %}  
         This game closed <strong>{{game.deadline|humantime}}</strong>
-        {% endif %} 
+        {% endif %}
+    </p>
+    <p>
+        {% for score in scores %} <strong>{{score.user.twit_screen_name}}</strong>
+        got <strong>{{score.score}} points</strong>
+        on this game.
+        <br/>
+        {% endfor %}
     </p>
 </div>
 {% endspaceless %}

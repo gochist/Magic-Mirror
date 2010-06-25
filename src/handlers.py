@@ -379,6 +379,11 @@ class GameViewHandler(BaseHandler):
         game.view = game.view + 1
         game.put()
         
+        scores = ScoreModel.all()\
+                          .filter('game =', game)\
+                          .order('-score')
+                          
+        
         self.render_page(main_module='game_view.html',
                          side_module='game_stats.html',
                          session=session,
@@ -386,7 +391,9 @@ class GameViewHandler(BaseHandler):
                          messages=messages,
                          option_game_map=option_game_map,
                          intime=intime,
-                         return_url_param=return_url_param)
+                         scores=scores,
+                         return_url_param=return_url_param,
+                         config=config)
     
     def post(self, game_id, mode):
         game_id = int(game_id)
@@ -401,9 +408,19 @@ class GameViewHandler(BaseHandler):
             text = self.request.get('message') \
                                .replace('\r', '') \
                                .replace('\n', '')
+
+            tweet_it = self.request.get('tweet_it')
+
             message = MessageModel(user=session.user, game=game,
                                    text=text)
             message.put()
+
+            logging.info(tweet_it)
+            
+            if tweet_it:
+                twit = self.get_twitapi(session)
+                ret = twit.PostUpdate(message.text)
+            
             self.redirect('/%d' % game_id)
             return
         
@@ -515,12 +532,17 @@ class HomeHandler(BaseHandler):
             games = games.order("-modified_time").fetch(10)
             hosted_games = self.makelist(games)
         
+        scores = ScoreModel.all()\
+                           .filter('user =', session.user)\
+                           .order('-created_time')
+        
         # render page
         self.render_page(main_module='user_home.html',
                          side_module='user_stats.html',
                          session=session,
                          joined_games=joined_games,
                          hosted_games=hosted_games,
+                         scores=scores,
                          user=user_info)
         
 

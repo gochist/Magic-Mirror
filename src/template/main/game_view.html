@@ -8,7 +8,9 @@ this template is for MagicMirror game view page.
         <ul class='option'>
             {% for option_game in option_game_map %}
             <li class='gamer_list round'>
-                <h3 class='space round'><strong>{{option_game.0|escape}}</strong></h3>
+                {% ifequal game.result option_game.2 %}<h3 class='space round pink-back'><strong>* {{option_game.0|escape}}</strong></h3>
+                {% else %}<h3 class='space round'><strong>{{option_game.0|escape}}</strong></h3>
+                {% endifequal %}
                 <div class='gamer_img_list'>
                     {% for gamer in option_game.1 %}
                     <div class='user_img'>
@@ -42,13 +44,13 @@ this template is for MagicMirror game view page.
             <h2 class='space round'>{{session.user.twit_screen_name|title}}, what are you thinking about this?
                 <form action='/{{game.key.id}}/msg' method='post'>
                     <div class='blue round'>
-                        <textarea class='twit' name='message'></textarea>
-                        <input type='submit'/>
+                        {% ifequal session.user.key.id game.created_by.key.id %} <textarea class='twit' name='message'>{{config.hosturl}}/{{game.key.id}} </textarea>
+                        {% else %}<textarea class='twit' name='message'>{{config.hosturl}}/{{game.key.id}} @{{game.created_by.twit_screen_name}} </textarea>
+                        {% endifequal %}<input type="checkbox" name="tweet_it" checked="checked" value="tweet_it" />tweet it<input type='submit'/>
                     </div>
                 </form>
             </h2>
-        </div>
-		{% endif %}
+        </div>{% endif %}
         {% for message in messages %}
         <div class='message_list'>
             <div class='game'>
