@@ -5,49 +5,26 @@
             minDate: 0
         });
     });
-    
-    function add_option(){
-        ops = document.getElementById("options");
-        text = "<div><input name='option' type='text'></div>";
-        ops.innerHTML += text;
-    }
 </script>
 <div>
-    <h1>issue a game</h1>
     <form method='post' action='/game'>
+    	<h2 class='space round'>Issue a game</h2>
         <div>
-            <h2>Subject</h2>
+            <h3 class='space round'>Subject</h3>
             <div>
                 <textarea autocomplete="off" cols="40" rows="2" name='subject'>Mirror, mirror on the wall, Who is the fairest fair of all?</textarea>
             </div>
         </div>
         <div>
-            <h2>Options</h2>
+            <h3 class='space round'>Options</h3>
             <div id='options'>
                 <textarea name='option'></textarea>
             </div>
-            <!--
-            <div id='options'>
-            <div>
-            <input name='option' type='text' value="Snow White">
-            </div>
-            <div>
-            <input name='option' type='text' value="the Queen">
-            </div>
-            </div>
-            <div>
-            <a href='javascript:add_option()'>
-            + add option
-            </a>
-            </div>
-            -->
         </div>
         <div>
-            <h2>Deadline</h2>
+            <h3 class='space round'>Deadline</h3>
             <div>
                 <input id="datepicker" name='due_date' type='text'>
-            </div>
-            <div>
                 <select name='due_time' value='12:00PM'>
                     <option value='12:00AM'>12:00AM</option>
                     <option value='12:30AM'>12:30AM</option>
@@ -102,10 +79,7 @@
             </div>
         </div>
         <div>
-            <h2><input type="checkbox" name="twit_it" checked=True value="twit_it" />post it to twitter</h2>
-        </div>
-        <div>
-            <input type='submit' value='submit'/>
+            <input type="checkbox" name="twit_it" checked=True value="twit_it" />post it to twitter<input type='submit' value='submit'/>
         </div>
     </form>
 </div> {% endspaceless %}
