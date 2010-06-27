@@ -21,7 +21,7 @@ def main():
                    ('/timeline', TimelineHandler),
                    #('/test', TestHandler)
                    ]
-    application = webapp.WSGIApplication(url_mapping, debug=True)
+    application = webapp.WSGIApplication(url_mapping)#, debug=True)
     run_wsgi_app(application)
 
 if __name__ == "__main__":
