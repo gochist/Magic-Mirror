@@ -265,12 +265,12 @@ class GameResultHandler(BaseHandler):
         winners = [map.user for map in maps if map.option_no == option_no]
         losers = [map.user for map in maps if map.option_no != option_no]
         
-        if winners :
+        if winners and losers :
             score = float(len(losers)) / len(winners)
         else:
             score = 0.0
             
-        # set score
+        # set score TODO: make it process in a transaction
         for winner in winners:
             final_score = 0.0
             # get final score

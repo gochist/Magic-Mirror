@@ -16,12 +16,12 @@
         Closed <strong>{{game.deadline|humantime}}</strong>.
         {% endif %}
     </p>
+</div>
+{% if scores %}<h2 class='space round'>Final Result</h2>
+{% endif %}
+<div class='space round'>
     <p>
-        {% for score in scores %}
-		{% if forloop.first %}
-			<h2 class='space round'>Final Result</h2>
-		{% endif %} 
-		<strong>{{score.user.twit_screen_name}}</strong>
+        {% for score in scores %}<strong>{{score.user.twit_screen_name}}</strong>
         : <strong>{{score.score}} pt</strong>
         <br/>
         {% endfor %}
