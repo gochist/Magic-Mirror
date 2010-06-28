@@ -8,24 +8,24 @@
 </script>
 <div>
     <form method='post' action='/game'>
-    	<h2 class='space round'>Issue a game</h2>
+        <h2 class='space round'>Issue a game</h2>
         <div>
             <h3 class='space round'>Subject</h3>
             <div>
-                <textarea autocomplete="off" cols="40" rows="2" name='subject'>Mirror, mirror on the wall, Who is the fairest fair of all?</textarea>
+                <textarea class='twitbox round3' autocomplete="off" rows="2" name='subject'>Mirror, mirror on the wall, Who is the fairest fair of all?</textarea>
             </div>
         </div>
         <div>
             <h3 class='space round'>Options</h3>
             <div id='options'>
-                <textarea name='option'></textarea>
+                <textarea class='twitbox round3' rows='5' name='option'></textarea>
             </div>
         </div>
         <div>
             <h3 class='space round'>Deadline</h3>
             <div>
                 <input id="datepicker" name='due_date' type='text'>
-                <select name='due_time' value='12:00PM'>
+                <select name='due_time'>
                     <option value='12:00AM'>12:00AM</option>
                     <option value='12:30AM'>12:30AM</option>
                     <option value='01:00AM'>01:00AM</option>
@@ -79,7 +79,10 @@
             </div>
         </div>
         <div>
-            <input type="checkbox" name="twit_it" checked=True value="twit_it" />post it to twitter<input type='submit' value='submit'/>
+            <h3 class='space round'><input type="checkbox" name="twit_it" checked=True value="twit_it" />Tweet It</h3>
+        </div>
+        <div>
+            <input type='submit' value='submit'/>
         </div>
     </form>
 </div> {% endspaceless %}

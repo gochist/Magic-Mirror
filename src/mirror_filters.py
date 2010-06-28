@@ -1,6 +1,7 @@
 from google.appengine.ext.webapp import template 
 from datetime import datetime, timedelta
 from math import modf
+
 register = template.create_template_register() 
 
 def humanround(value, threshold=0.8):
@@ -22,8 +23,6 @@ def humantime(value):
     d = value - datetime.utcnow()
     seconds = d.days * SEC_TO_DAY + d.seconds
     ret = {}
-    
-#    return d#str(seconds)
 
     if seconds < 0 : 
         ret["postfix"] = "ago"

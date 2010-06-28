@@ -41,15 +41,15 @@ this template is for MagicMirror game view page.
     <div class='messages'>
         {% if session %}
         <div class='post_twit round'>
-            <h2 class='space round'>{{session.user.twit_screen_name|title}}, what are you thinking about this?
-                <form action='/{{game.key.id}}/msg' method='post'>
-                    <div class='blue round'>
-                        {% ifequal session.user.key.id game.created_by.key.id %} <textarea class='twit' name='message'>{{config.hosturl}}/{{game.key.id}} </textarea>
-                        {% else %}<textarea class='twit' name='message'>{{config.hosturl}}/{{game.key.id}} @{{game.created_by.twit_screen_name}} </textarea>
-                        {% endifequal %}<input type="checkbox" name="tweet_it" checked="checked" value="tweet_it" />tweet it<input type='submit'/>
-                    </div>
-                </form>
-            </h2>
+            <h2 class='simple round'>{{session.user.twit_screen_name|title}}, what do you think about?</h2>
+            <form action='/{{game.key.id}}/msg' method='post'>
+                <div class='blue round'>
+                    {% ifequal session.user.key.id game.created_by.key.id %} <textarea class='twitbox round3' name='message'>{{config.hosturl}}/{{game.key.id}} </textarea>
+                    {% else %}<textarea class='twitbox round3' name='message'>{{config.hosturl}}/{{game.key.id}} @{{game.created_by.twit_screen_name}} </textarea>
+                    {% endifequal %}<input type="checkbox" name="tweet_it" checked="checked" value="tweet_it" /><strong>tweet it</strong>
+                    <input type='submit'/>
+                </div>
+            </form>
         </div>{% endif %}
         {% for message in messages %}
         <div class='message_list'>

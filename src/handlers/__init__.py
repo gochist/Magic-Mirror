@@ -247,8 +247,10 @@ class TimelineHandler(BaseHandler):
                          near_deadline=near_deadline_list,
                          hot_games=hot_game_list)        
 
-class GameResultHandler(BaseHandler):
+class GameResultHandler(BaseHandler):    
     def get(self, game_id, option_no):
+        """ Set final result of game as input parameter.
+        """
         game_id = int(game_id)
         option_no = int(option_no)
         
@@ -309,7 +311,8 @@ class GameJoinHandler(BaseHandler):
     def get(self, game_id, option_no):
         game_id = int(game_id)
         option_no = int(option_no)
-                
+
+               
         session = self.get_vaild_session()
         if not session:
             self.redirect('/%s' % game_id)
@@ -319,6 +322,7 @@ class GameJoinHandler(BaseHandler):
         
         query = OptionUserMapModel.all().filter('game = ', game)\
                                         .filter('user = ', session.user)
+                                        
         if query.count() > 0 :
             option_map = query.fetch(1)[0]
             option_map.option_no = option_no
