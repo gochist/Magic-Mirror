@@ -2,6 +2,7 @@ body {
     text-align: left;
     font-family: 'Lucida Grande', sans-serif;
     background-image: url(/static/img/bg-clouds.png);
+    /*background-image: url(/static/img/bg-wall.jpg);*/
     background-repeat: repeat-x;
     background-color: #C0DEED;
 }
