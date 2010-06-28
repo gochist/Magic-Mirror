@@ -1,5 +1,5 @@
-{% spaceless %}<h2 class='space round'>Game Stats</h2>
-<div class='space round'>
+{% spaceless %}<h2 class='sidebar'>Game Stats</h2>
+<div class='space'>
     {% ifequal session.user.key.id game.created_by.key.id %}
     <p>
         Hello, <strong>{{session.user.twit_screen_name}}</strong>. You are the host.
@@ -17,9 +17,9 @@
         {% endif %}
     </p>
 </div>
-{% if scores %}<h2 class='space round'>Final Result</h2>
+{% if scores %}<h2 class='sidebar'>Final Result</h2>
 {% endif %}
-<div class='space round'>
+<div class='space'>
     <p>
         {% for score in scores %}<strong>{{score.user.twit_screen_name}}</strong>
         : <strong>{{score.score}} pt</strong>

@@ -105,11 +105,12 @@ div.main_layout {
 
 div.side_layout {
     float: left;
-    width: 200px;
+    width: 220px;
     height: auto;
-    padding: 10px;
+    /*padding: 10px;*/
     background-color: #7bc4f1;
     margin: 0px;
+    font-size: small;
 }
 
 div.footer_layout {
@@ -117,6 +118,8 @@ div.footer_layout {
     position: static;
     float: left;
     margin: auto;
+    padding: 10px;
+    font-size: small;
     width: 763px;
 }
 
@@ -176,6 +179,13 @@ h2 {
     border: solid;
     border-width: 1px;
     border-color: #444444;
+}
+
+.sidebar {
+    margin: 0px;
+    padding: 5px;
+    background-color: #8ed7ff;
+    border: none;
 }
 
 h3 {
