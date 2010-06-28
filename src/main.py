@@ -19,9 +19,9 @@ def main():
                    ('/game/(new|modify|delete)', GameHandler),
                    ('/game', GameHandler),
                    ('/timeline', TimelineHandler),
-                   #('/test', TestHandler)
+#                   ('/test', TestHandler)
                    ]
-    application = webapp.WSGIApplication(url_mapping)#, debug=True)
+    application = webapp.WSGIApplication(url_mapping, debug=True)
     run_wsgi_app(application)
 
 if __name__ == "__main__":
