@@ -138,12 +138,15 @@ def delete_req_token_by_model(token):
     db.delete(token)    
 
 def check_session(sid, extend=True):
-    session = SessionModel.get(sid)
+    try:
+        session = SessionModel.get(sid)
+    except Exception:
+        session = None
+        
     if session:
         if datetime.utcnow() - session.modified > config.session_life:
             return None
         elif extend:
             session.put()
         
-    return session
-              
+    return session              

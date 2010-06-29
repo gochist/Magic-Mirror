@@ -5,6 +5,7 @@ body {
     /*background-image: url(/static/img/bg-wall.jpg);*/
     background-repeat: repeat-x;
     background-color: #C0DEED;
+    border: none;
 }
 
 .round {
@@ -19,6 +20,10 @@ body {
     border-bottom-right-radius: 3px 3px;
     border-top-left-radius: 3px 3px;
     border-top-right-radius: 3px 3px;
+}
+
+div.chart {
+    margin: 0px;
 }
 
 h2.simple {
@@ -98,7 +103,6 @@ div.middle_layout {
 div.main_layout {
     float: left;
     width: 523px;
-    height: auto;
     padding: 10px;
     margin: 0px;
     background-color: #FFFFFF;
