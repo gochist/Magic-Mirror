@@ -4,9 +4,9 @@ from google.appengine.api.urlfetch_errors import DownloadError
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from models import *
+from models import fetcher
 import config, os, datetime
 from oauthtwitter import OAuthApi
-from models import fetcher
 import oauth
 import utils
 import urllib
@@ -15,17 +15,7 @@ class BaseHandler(webapp.RequestHandler):
     # cookie related functions
     def set_cookie(self, key, value, path='/',
                    expires='Fri, 15-Jun-2012 23:59:59 GMT'):
-        """Set cookie. 
-        
-        Args: 
-          key:  
-          value: 
-          path: 
-          expires:
-        
-        Returns:
-          None
-        """
+        """Set cookie. """
         add_header = self.response.headers.add_header
         data_dict = {'key': key,
                      'value': value,
@@ -62,12 +52,12 @@ class BaseHandler(webapp.RequestHandler):
           token : access token key
           secret : access secret key
         """
-
         # set cookie sid
         session = fetcher.put_session(user, token, secret)
         sid = session.key()
         self.set_cookie("sid", sid)
     
+
     def get_vaild_session(self, extend=True):
         """Check if the session is vaild
         
@@ -79,16 +69,8 @@ class BaseHandler(webapp.RequestHandler):
           Otherwise, None will be returned.
         """
         sid = self.get_cookie("sid")
-        if sid:            
-            session = SessionModel.get(sid)      
-            if session:
-                # TODO: implement session timeout
-#                if session.modified.time() + config.session_life < time.time() :
-#                    return None       
-                if extend:
-                    session.put() 
-                return session
-        return None
+        session = fetcher.check_session(sid, extend)
+        return session
     
     def get_twitapi(self, session=None):
         if session:
@@ -129,12 +111,10 @@ class BaseHandler(webapp.RequestHandler):
 
 class TwitSigninHandler(BaseHandler):
     def get(self):
+        # check session
         session = self.get_vaild_session(extend=False)
         if session:
             self.delete_session(session)
-            logging.info("Session already exists. " + 
-                         "Old session will be deleted and " + 
-                         "new one will be genereated")
         
         # get request token
         twit = OAuthApi()
@@ -144,44 +124,32 @@ class TwitSigninHandler(BaseHandler):
             self.redirect("/?msg=error")
             return
         
-        
         # return url control
         return_url = urllib.unquote(self.request.get('return_url'))
         
         # insert request token into DB
-        req_token_model = OAuthRequestToken(token=req_token.key,
-                                            secret=req_token.secret,
-                                            return_url=return_url)
-        req_token_model.put()
-        
+        fetcher.put_req_token(req_token.key, req_token.secret, return_url)
         
         # redirect user to twitter auth page
         auth_url = twit.getAuthorizationURL(req_token)
         self.redirect(auth_url)
         
-        logging.info("sign in started.")
-        
 class TwitSignoutHandler(BaseHandler):
     def get(self):
+        # check session
         session = self.get_vaild_session(extend=False)
         if session:
             self.delete_session(session)
-        else :
-            logging.info("TwitSignoutHandler attempted " + 
-                         "to sign out without vaild session")
-            
+
+        # go home
         self.redirect("/")        
 
 class TwitCallbackHandler(BaseHandler):
     def get(self):
-        req_token = None        
+        # get req token from DB
         token = self.request.get("oauth_token")
-        logging.info("oauth token in callback handler request : %s" % token)
-        query = OAuthRequestToken.all().filter('token =', token)
-        
-        if query.count() > 0:
-            req_token = query.fetch(1)[0]            
-        else:
+        req_token = fetcher.get_req_token_by_oauth_token(token)
+        if not req_token:
             self.redirect('/oauth/twitter/signin')
             return
         
@@ -200,7 +168,7 @@ class TwitCallbackHandler(BaseHandler):
         token = access_token.key
         secret = access_token.secret
         # delete OAuthToken
-        db.delete(req_token)
+        fetcher.delete_req_token_by_model(req_token)
         
         # get user info 
         try:
@@ -212,14 +180,13 @@ class TwitCallbackHandler(BaseHandler):
         user = twit.GetUserInfo()
 
         # add user 
-        user_model = utils.User()
-             
-        user_model.set(twit_id=str(user.id),
-                       twit_screen_name=user.screen_name,
-                       twit_img_url=user.profile_image_url)
+        user_model = fetcher.set_user(twit_id=str(user.id),
+                                      twit_screen_name=user.screen_name,
+                                      twit_img_url=user.profile_image_url)
+        
         
         # add session
-        self.new_session(user_model.model, token, secret)        
+        self.new_session(user_model, token, secret)        
         
         # redirect to home
         if not return_url:
@@ -231,20 +198,13 @@ class TimelineHandler(BaseHandler):
         session = self.get_vaild_session()        
 
         # near deadline
-        games = GameModel.all() \
-                         .filter("deadline >", datetime.datetime.utcnow()) \
-                         .order("deadline") \
-                         .fetch(5)
+        games = fetcher.get_games_near_deadline()
         near_deadline_list = self.make_game_list(games)
         
         # hot games
-        games = GameModel.all()\
-                         .order("-view")\
-                         .fetch(5)
-        
+        games = fetcher.get_games_by_pageview()
         hot_game_list = self.make_game_list(games)
         
-                                           
         self.render_page(main_module='public_timeline.html',
                          side_module='introduce.html',
                          session=session,
@@ -262,51 +222,29 @@ class GameResultHandler(BaseHandler):
         if not session:
             self.redirect('/%s' % game_id)
             return
-        
-        game = GameModel.get_by_id(game_id)
 
-        maps = OptionUserMapModel.all()\
-                                 .filter('game =', game)
+        # get all gamers, winners, losers
+        winners = fetcher.get_gamer_list(game_id=game_id, option=option_no)
+        losers = fetcher.get_gamer_list(game_id=game_id, option=option_no,
+                                        invert=True)
 
-        winners = [map.user for map in maps if map.option_no == option_no]
-        losers = [map.user for map in maps if map.option_no != option_no]
-        
+        # calc score        
         if winners and losers :
             score = float(len(losers)) / len(winners)
         else:
             score = 0.0
             
-        # set score TODO: make it process in a transaction
+        # set score TODO: make it as a transaction
         for winner in winners:
-            final_score = 0.0
-            # get final score
-            query = ScoreModel.all().filter('user =', winner)\
-                                    .order('-created_time')
-            if query.count() > 0:
-                final_score = query.fetch(1)[0].final_score
-                                    
-            winner_score = ScoreModel(user=winner, game=game, score=score,
-                                      final_score=final_score + score)
-            winner_score.put()
+            fetcher.get_final_score(winner)
+            fetcher.set_score(winner, game_id, score)
 
-
-        # set score
         for loser in losers:
-            final_score = 0.0
-            # get final score
-            query = ScoreModel.all().filter('user =', loser)\
-                                    .order('-created_time')
-            if query.count() > 0:
-                final_score = query.fetch(1)[0].final_score
-                                    
-            winner_score = ScoreModel(user=loser, game=game, score= -1.0,
-                                      final_score=final_score - 1.0)
-            winner_score.put()
+            fetcher.get_final_score(loser)
+            fetcher.set_score(loser, game_id, -1)
             
-        # set game
-        game.result = option_no
-        game.put()
-
+        # set game result
+        game = fetcher.set_game_result(game_id, option_no)
         
         self.redirect('/%s' % game_id)
         
