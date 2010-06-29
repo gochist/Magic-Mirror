@@ -16,7 +16,7 @@ def main():
                    ('/oauth/twitter/signin', TwitSigninHandler),
                    ('/oauth/twitter/signout', TwitSignoutHandler),
                    ('/oauth/twitter/callback', TwitCallbackHandler),
-                   ('/game/(new|modify|delete)', GameHandler),
+                   ('/game/(new)', GameHandler),
                    ('/game', GameHandler),
                    ('/timeline', TimelineHandler),
 #                   ('/test', TestHandler)

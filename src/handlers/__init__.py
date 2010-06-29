@@ -6,6 +6,7 @@ from google.appengine.ext.webapp import template
 from models import *
 import config, os, datetime
 from oauthtwitter import OAuthApi
+from models import fetcher
 import oauth
 import utils
 import urllib
@@ -61,12 +62,10 @@ class BaseHandler(webapp.RequestHandler):
           token : access token key
           secret : access secret key
         """
-        session_model = SessionModel(user=user, token=token,
-                                     secret=secret)
-        session_model.put()
-        
+
         # set cookie sid
-        sid = session_model.key()
+        session = fetcher.put_session(user, token, secret)
+        sid = session.key()
         self.set_cookie("sid", sid)
     
     def get_vaild_session(self, extend=True):
@@ -115,10 +114,15 @@ class BaseHandler(webapp.RequestHandler):
         self.response.out.write(ret)
         
         
-    def makelist(self, games):
+    def make_game_list(self, games, n=10):
         ret = ""
-        for game in games:
+        if not games : 
+            return ""
+        
+        for game in games[:n]:
             ret += self.render_module("game_preview.html", game=game)
+        
+        logging.info(ret)
         
         return ret
         
@@ -231,14 +235,14 @@ class TimelineHandler(BaseHandler):
                          .filter("deadline >", datetime.datetime.utcnow()) \
                          .order("deadline") \
                          .fetch(5)
-        near_deadline_list = self.makelist(games)
+        near_deadline_list = self.make_game_list(games)
         
         # hot games
         games = GameModel.all()\
                          .order("-view")\
                          .fetch(5)
         
-        hot_game_list = self.makelist(games)
+        hot_game_list = self.make_game_list(games)
         
                                            
         self.render_page(main_module='public_timeline.html',
@@ -491,7 +495,7 @@ class GameHandler(BaseHandler):
             self.redirect('/game/new')
             return
         
-        # TODO: implement twit msg
+        
         # insert game into DB
         game = GameModel(subject=page_dict['subject'],
                          options=page_dict['options'],
@@ -499,6 +503,18 @@ class GameHandler(BaseHandler):
                          created_by=session.user,
                          result= -1)
         game.put()
+        
+        # implement twit msg
+        tweet_it = self.request.get('tweet_it')
+        if tweet_it:
+            url = config.hosturl + "/" + str(game.key().id())
+            msg = game.subject[:135 - len(url)] + " " + url
+            twit = self.get_twitapi(session)
+            twit.PostUpdate(msg)
+            
+            logging.info("twit this! " + msg)
+            
+        # redirect
         self.redirect("/%s" % game.key().id())
         
         
@@ -518,23 +534,15 @@ class HomeHandler(BaseHandler):
             return
 
         joined_games = ""
-        maps = OptionUserMapModel.all()\
-                                 .filter("user =", session.user)
-                                 
-                                 
-        if maps.count() > 0:
-            games = [game.game for game in maps.order("-modified_time").fetch(10)]
-            joined_games = self.makelist(games)           
+        games = fetcher.get_games_playing_by(session.user)
+        joined_games = self.make_game_list(games)           
 
         # hosted by me
         hosted_games = ""
-        games = GameModel.all()\
-                         .filter("created_by =", session.user)
+        games = fetcher.get_games_hosted_by(session.user)
                          
-                         
-        if games.count() > 0:
-            games = games.order("-modified_time").fetch(10)
-            hosted_games = self.makelist(games)
+        if games:
+            hosted_games = self.make_game_list(games)
         
         scores = ScoreModel.all()\
                            .filter('user =', session.user)\
