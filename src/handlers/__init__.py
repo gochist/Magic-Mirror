@@ -463,6 +463,8 @@ class HomeHandler(BaseHandler):
             self.redirect('/')
             return
         
+        user = session.user
+        
         # get user information
         twit = self.get_twitapi(session)
         try:
@@ -472,18 +474,18 @@ class HomeHandler(BaseHandler):
             return
 
         joined_games = ""
-        games = fetcher.get_games_playing_by(session.user)
+        games = fetcher.get_games_playing_by(user)
         joined_games = self.make_game_list(games)           
 
         # hosted by me
         hosted_games = ""
-        games = fetcher.get_games_hosted_by(session.user)
+        games = fetcher.get_games_hosted_by(user)
                          
         if games:
             hosted_games = self.make_game_list(games)
         
         scores = ScoreModel.all()\
-                           .filter('user =', session.user)\
+                           .filter('user =', user)\
                            .order('-created_time')
         
         # render page

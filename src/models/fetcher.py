@@ -48,14 +48,22 @@ def set_game_result(game_id, option):
 
 ###########################################
 # related on user operation
-def get_user_by_twitid(twit_id):
+
+def get_user_by(key, value):
     user = None
-    query = UserModel.all().filter("twit_id =", twit_id)
+    query = UserModel.all().filter("%s =" % key, value)
     
     if query.count > 0 :
         user = query.fetch(1)[0]
     
     return user
+
+def get_user_by_twitid(twit_id):
+    return get_user_by("twit_id", twit_id)
+
+def get_user_by_twit_screen_name(twit_screen_name):
+    return get_user_by("twit_screen_name", 
+                       twit_screen_name)
 
 def set_user(twit_id, twit_screen_name, twit_img_url):
     user = get_user_by_twitid(twit_id)
@@ -138,7 +146,11 @@ def delete_req_token_by_model(token):
     db.delete(token)    
 
 def check_session(sid, extend=True):
-    session = SessionModel.get(sid)
+    try:
+        session = SessionModel.get(sid)
+    except Exception:
+        session = None
+        
     if session:
         if datetime.utcnow() - session.modified > config.session_life:
             return None
