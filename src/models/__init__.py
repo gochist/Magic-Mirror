@@ -7,6 +7,7 @@ class UserModel(db.Model):
     score = db.IntegerProperty(default=0)
     created = db.DateTimeProperty(auto_now_add=True)
     modified = db.DateTimeProperty(auto_now=True)
+    final_score = db.FloatProperty(default=0.0)
 
 class OAuthRequestToken(db.Model):
     token = db.StringProperty()

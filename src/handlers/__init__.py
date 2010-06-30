@@ -238,11 +238,9 @@ class GameResultHandler(BaseHandler):
             
         # set score TODO: make it as a transaction
         for winner in winners:
-            fetcher.get_final_score(winner)
             fetcher.set_score(winner, game_id, score)
 
         for loser in losers:
-            fetcher.get_final_score(loser)
             fetcher.set_score(loser, game_id, lost_score)
             
         # set game result
@@ -463,13 +461,13 @@ class GameHandler(BaseHandler):
 class HomeHandler(BaseHandler):
     def get(self, twit_screen_name=None):
         session = self.get_vaild_session()
-        if not session:
-            self.redirect('/')
-            return
         
         if twit_screen_name :
             user = fetcher.get_user_by_twit_screen_name(twit_screen_name)
         else :
+            if not session:
+                self.redirect('/')
+                return
             user = session.user
 
         joined_games = ""
@@ -538,4 +536,3 @@ class TestHandler(BaseHandler):
         db.delete(GameModel.all().fetch(100))
         
         self.redirect('/')
-

@@ -19,22 +19,15 @@ def get_gamer_list(game_id, option=None, invert=False):
     else:
         return [map.user for map in maps]
 
-def get_final_score(user):
-    query = ScoreModel.all()\
-                      .filter('user =', user)\
-                      .order('-created_time')
-
-    if query.count() > 0:
-        return query.fetch(1)[0].final_score
-    else:
-        return 0.0                       
-
 def set_score(user, game_id, score):
-    final_score = get_final_score(user)
+    final_score = user.final_score
     game = GameModel.get_by_id(game_id)
     model = ScoreModel(user=user, game=game, score=score,
                        final_score=final_score + score)
     model.put()
+    
+    user.final_score = model.final_score
+    user.put()
     
     return model
 
