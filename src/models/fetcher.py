@@ -158,4 +158,3 @@ def check_session(sid, extend=True):
             session.put()
         
     return session
-              

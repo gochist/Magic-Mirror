@@ -9,6 +9,39 @@
         <img class='user_img' src='{{game.created_by.twit_img_url}}'>Posted {{game.created_time|humantime}} by <strong>{{game.created_by.twit_screen_name}}</strong>.
     </p>
     {% endifequal %}
+    <script type='text/javascript'>
+                        google.load('visualization', '1', {
+                            'packages': ['corechart']
+                        });
+                        
+                        google.setOnLoadCallback(drawChart);
+                        
+                        function drawChart(){
+                        
+                            // Create our data table.
+                            var data = new google.visualization.DataTable();
+                            data.addColumn('string', 'Option');
+                            data.addColumn('number', 'Persons joined in');
+                            data.addRows([
+                			{% for option in option_game_map %}['{{option.0}}', {{option.1.count}}]
+							{% if not forloop.last %},{% endif %}
+							{% endfor %}
+                			]);
+                            
+                            // Instantiate and draw our chart, passing in some options.
+                            var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+                            chart.draw(data, {
+                                width: 200,
+                                height: 200,
+                                is3D: true,
+                                backgroundColor: '#7bc4f1',
+                                legend: 'none',
+                                tooltipFontSize: 12
+                            });
+                        }
+                    
+            
+    </script>
     <p>
         {% if intime %}<strong>{{game.deadline|humantime}}</strong>
         to close this game. 
@@ -16,6 +49,8 @@
         Closed <strong>{{game.deadline|humantime}}</strong>.
         {% endif %}
     </p>
+</div>
+<div class="chart" id="chart_div">
 </div>
 {% if scores %}<h2 class='sidebar'>Final Result</h2>
 {% endif %}

@@ -231,8 +231,10 @@ class GameResultHandler(BaseHandler):
         # calc score        
         if winners and losers :
             score = float(len(losers)) / len(winners)
+            lost_score = -1.0
         else:
             score = 0.0
+            lost_score = 0.0
             
         # set score TODO: make it as a transaction
         for winner in winners:
@@ -241,7 +243,7 @@ class GameResultHandler(BaseHandler):
 
         for loser in losers:
             fetcher.get_final_score(loser)
-            fetcher.set_score(loser, game_id, -1)
+            fetcher.set_score(loser, game_id, lost_score)
             
         # set game result
         game = fetcher.set_game_result(game_id, option_no)
@@ -296,15 +298,15 @@ class GameViewHandler(BaseHandler):
         game = GameModel.get_by_id(game_id)
         # FIXME:
         if not game:
-            raise Exception
+            self.redirect('/')
+            return
         
         option_game_map = []
         for i, option in enumerate(game.options):
             gamers = OptionUserMapModel.all()\
                                        .filter('game =', game)\
                                        .filter('option_no =', i)\
-                                       .order('modified_time')\
-                                       .fetch(100)
+                                       .order('modified_time')
             option_game_map.append((option, gamers, i))
             
         query = MessageModel.all()\
@@ -338,6 +340,8 @@ class GameViewHandler(BaseHandler):
                          option_game_map=option_game_map,
                          intime=intime,
                          scores=scores,
+                         google_visualization=True,
+                         jquery=True,
                          return_url_param=return_url_param,
                          config=config)
     
