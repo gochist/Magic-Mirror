@@ -11,6 +11,10 @@ def humanround(value, threshold=0.8):
     else :
         return integer
 
+@register.filter
+def homelink(twit_screen_name):
+    return "<a class='homelink' href='/home/%s'>%s</a>" % (twit_screen_name, twit_screen_name)
+
 @register.filter 
 def humantime(value):  
     # FIXME: not completed

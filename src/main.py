@@ -8,6 +8,7 @@ template.register_template_library('mirror_filters')
 def main():
     url_mapping = [('/', MainHandler),
                    ('/home', HomeHandler),
+                   ('/home/(.*)', HomeHandler),
                    ('/([0-9]*)', GameViewHandler),
                    ('/([0-9]*)/(msg)', GameViewHandler),
                    ('/msg/(.*)/delete', MsgDeleteHandler),

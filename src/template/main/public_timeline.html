@@ -1,8 +1,12 @@
 {% spaceless %}
 <div>
+	{% if near_deadline %}
     <h2 class='space round'>Nearest Deadline</h2>
     {{near_deadline}}
+	{% endif %}
+	{% if hot_games %}
 	<h2 class='space round'>Most Popular</h2>
     {{hot_games}}
+	{% endif %}
 </div>
 {% endspaceless %}

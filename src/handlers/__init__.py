@@ -461,21 +461,16 @@ class GameHandler(BaseHandler):
         
         
 class HomeHandler(BaseHandler):
-    def get(self):
+    def get(self, twit_screen_name=None):
         session = self.get_vaild_session()
         if not session:
             self.redirect('/')
             return
         
-        user = session.user
-        
-        # get user information
-        twit = self.get_twitapi(session)
-        try:
-            user_info = twit.GetUserInfo()
-        except DownloadError:
-            self.redirect("/?msg=error")
-            return
+        if twit_screen_name :
+            user = fetcher.get_user_by_twit_screen_name(twit_screen_name)
+        else :
+            user = session.user
 
         joined_games = ""
         games = fetcher.get_games_playing_by(user)
@@ -490,7 +485,7 @@ class HomeHandler(BaseHandler):
         
         scores = ScoreModel.all()\
                            .filter('user =', user)\
-                           .order('-created_time')
+                           .order('created_time')
         
         # render page
         self.render_page(main_module='user_home.html',
@@ -499,7 +494,9 @@ class HomeHandler(BaseHandler):
                          joined_games=joined_games,
                          hosted_games=hosted_games,
                          scores=scores,
-                         user=user_info)
+                         config=config,
+                         google_visualization=True,
+                         user=user)
         
 
        

@@ -24,6 +24,14 @@ body {
 
 div.chart {
     margin: 0px;
+    padding: 0px;
+    border: none;
+}
+
+iframe {
+    margin: 0px;
+    padding: 0px;
+    border: none;
 }
 
 h2.simple {
@@ -98,6 +106,8 @@ div.middle_layout {
     height: auto;
     overflow: hidden;
     background-color: #7bc4f1;
+    background-image: url(/static/img/backline.png);
+    background-repeat: repeat-y;
 }
 
 div.main_layout {
@@ -210,6 +220,7 @@ div.message {
 
 div.message_links {
     float: right;
+    overflow: hidden;
 }
 
 div.game_view {

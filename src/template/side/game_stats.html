@@ -35,8 +35,7 @@
                                 height: 200,
                                 is3D: true,
                                 backgroundColor: '#7bc4f1',
-                                legend: 'none',
-                                tooltipFontSize: 12
+                                legend: 'none'
                             });
                         }
                     
@@ -52,14 +51,14 @@
 </div>
 <div class="chart" id="chart_div">
 </div>
-{% if scores %}<h2 class='sidebar'>Final Result</h2>
-{% endif %}
+{% if scores.count %}<h2 class='sidebar'>Final Result</h2>
 <div class='space'>
     <p>
-        {% for score in scores %}<strong>{{score.user.twit_screen_name}}</strong>
+        {% for score in scores %}<strong>{{score.user.twit_screen_name|homelink}}</strong>
         : <strong>{{score.score}} pt</strong>
         <br/>
         {% endfor %}
     </p>
 </div>
+{% endif %}
 {% endspaceless %}

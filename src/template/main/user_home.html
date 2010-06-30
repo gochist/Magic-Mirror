@@ -1,8 +1,13 @@
 {% spaceless %}
 <div>
+	{% if joined_games %}
     <h2 class='space round'>Playing</h2>
 	{{joined_games}}
+	{% endif %}
+	
+	{% if hosted_games %}
     <h2 class='space round'>Hosting</h2>	
 	{{hosted_games}}
+	{% endif %}
 </div>
 {% endspaceless %}

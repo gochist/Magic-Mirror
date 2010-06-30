@@ -17,7 +17,7 @@ this template is for MagicMirror game view page.
                         <img class='user_img2' src='{{gamer.user.twit_img_url}}'>
                         <br/>
                         <span class='img_text'>
-                            {{gamer.user.twit_screen_name}}
+                            {{gamer.user.twit_screen_name|homelink}}
                         </span>
                     </div>
                     {% endfor %}
@@ -58,7 +58,7 @@ this template is for MagicMirror game view page.
                     <img class='user_img' src='{{message.user.twit_img_url}}'>
                 </div>
                 <p class='twit_text'>
-                    <strong>{{message.user.twit_screen_name}}</strong>
+                    <strong>{{message.user.twit_screen_name|homelink}}</strong>
                     {{message.text|escape}}
                     <br/>
                     <span class='deadline'>

@@ -1,17 +1,56 @@
 <h2 class='sidebar'>User Stats</h2>
 <div class='space'>
-    <img class='user_img' src='{{session.user.twit_img_url}}'/>
+    <img class='user_img' src='{{user.twit_img_url}}'/>
     <p>
-        <strong>{{session.user.twit_screen_name}}</strong>
+        <strong>{{user.twit_screen_name}}</strong>
     </p>
-    {% for score in scores %} 
-    {% if forloop.first %} 
-    <p>
-        {% endif %}
-        {{score.score}}, {{socre.final_score}}
-        <br/>
-        {%if forloop.last %}
-    </p>
-    {% endif %}
-    {% endfor %}
 </div>
+{% if scores.count %}<h2 class='sidebar'>Score</h2>
+<script type='text/javascript'>
+                                    google.load('visualization', '1', {
+                                        'packages': ['corechart']
+                                    });
+                                    
+                                    google.setOnLoadCallback(drawChart);
+                                    
+                                    function drawChart(){
+                                    
+                                        // Create our data table.
+                                        var data = new google.visualization.DataTable();
+                                        data.addColumn('string', 'x');
+                                        data.addColumn('number', 'Total Score');
+            							/*data.addColumn('number', 'Score');*/
+                                        data.addRows([
+                            			{% for score in scores %}
+        								['{{score.game.key.id}}', {{score.final_score}}]
+            							{% if not forloop.last %},{% endif %}
+            							{% endfor %}
+                            			]);
+        								
+        								data.insertRows(0,[['#',0]]);
+                                        
+                                        // Instantiate and draw our chart, passing in some options.
+                                        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+                                        chart.draw(data, {
+                                            width: 200,
+                                            height: 200,
+            								legend: 'none',
+                                            backgroundColor: '#7bc4f1'
+                                        });
+            
+            							google.visualization.events.addListener(chart, 'select', function() {
+            								var item = chart.getSelection()[0];
+        									var gameid = data.getValue(item.row, 0);
+        									if (gameid != '#'){
+            							    	window.location = '/'+gameid;
+        									}
+            							});  
+                                    }
+            
+                                
+                        
+                
+</script>
+<div class="chart" id="chart_div">
+</div>
+{% endif %}
