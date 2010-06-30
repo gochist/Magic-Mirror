@@ -151,3 +151,13 @@ def check_session(sid, extend=True):
             session.put()
         
     return session
+
+def delete_game(game_id):
+    game = GameModel.get_by_id(game_id)
+    for m in MessageModel.all().filter('game =',game):
+        m.delete()
+    for m in OptionUserMapModel.all().filter('game =',game):
+        m.delete()
+    for m in ScoreModel.all().filter('game =',game):
+        m.delete()
+    game.delete()    

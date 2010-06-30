@@ -10,7 +10,7 @@ def main():
                    ('/home', HomeHandler),
                    ('/home/(.*)', HomeHandler),
                    ('/([0-9]*)', GameViewHandler),
-                   ('/([0-9]*)/(msg)', GameViewHandler),
+                   ('/([0-9]*)/(msg|delete)', GameViewHandler),                   
                    ('/msg/(.*)/delete', MsgDeleteHandler),
                    ('/([0-9]*)/([0-9]*)', GameJoinHandler),
                    ('/([0-9]*)/([0-9]*)/set_result', GameResultHandler),
