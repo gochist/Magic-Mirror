@@ -287,13 +287,19 @@ class MsgDeleteHandler(BaseHandler):
         self.redirect("/%s" % game.key().id())        
 
 class GameViewHandler(BaseHandler):
-    def get(self, game_id):
+    def get(self, game_id, mode=None):
         game_id = int(game_id)
 
         session = self.get_vaild_session()
         game = GameModel.get_by_id(game_id)
         # FIXME:
         if not game:
+            self.redirect('/')
+            return
+        
+        # delete mode
+        if mode == 'delete':            
+            fetcher.delete_game(game_id)
             self.redirect('/')
             return
         
