@@ -104,8 +104,6 @@ class BaseHandler(webapp.RequestHandler):
         for game in games[:n]:
             ret += self.render_module("game_preview.html", game=game)
         
-        logging.info(ret)
-        
         return ret
         
 

@@ -22,6 +22,21 @@ body {
     border-top-right-radius: 3px 3px;
 }
 
+a {
+    text-decoration: none;
+    border: none;
+}
+
+a.homelink {
+}
+
+a.homelink:hover {
+    color: red;
+}
+
+a.homelink:visited {
+}
+
 div.chart {
     margin: 0px;
     padding: 0px;
