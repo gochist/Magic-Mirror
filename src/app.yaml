@@ -6,6 +6,10 @@ api_version: 1
 handlers:
 - url: /static
   static_dir: static
+
+- url: /favicon.ico
+  static_files: static/img/favicon.ico
+  upload: static/img/favicon.ico
   
 - url: /test.*
   script: gaeunit.py  
