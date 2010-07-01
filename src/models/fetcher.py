@@ -121,10 +121,12 @@ def get_games_hosted_by(user):
     """ return games which is being hosted by user 
     """
     games = GameModel.all()\
-                     .filter("created_by =", user)
+                     .filter("created_by =", user)\
+                     .filter("deadline >", datetime.utcnow())\
+                     .filter("result =", -1)
                      
     if games.count() > 0:
-        games = games.order("-modified_time")
+        games = games.order("-deadline")
 
     return games
 
@@ -137,7 +139,7 @@ def get_games_pending_by(user):
                      .filter("result =", -1)
                      
     if games.count() > 0:
-        games = games.order("-modified_time")
+        games = games.order("-deadline")
 
     return games
 

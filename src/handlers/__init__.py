@@ -460,15 +460,15 @@ class GameHandler(BaseHandler):
                 raise Exception
             
             # deadline should be future
+            error = "deadline"
             deadline = due_date + due_time
             deadline = utils.utc_time(deadline, utc_offset)
-            if deadline < datetime.datetime.utcnow():
-                error = "deadline"
+            if deadline < datetime.datetime.utcnow():                
                 raise Exception
             
         except Exception:
-            encoded_url = urllib.urlencode({'subject':subject,
-                                            'options':req_options,
+            encoded_url = urllib.urlencode({'subject':oauth._utf8_str(subject),
+                                            'options':oauth._utf8_str(req_options),
                                             'due_date':due_date,
                                             'due_time':due_time,
                                             'error':error})            

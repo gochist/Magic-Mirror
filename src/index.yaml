@@ -36,6 +36,13 @@ indexes:
   properties:
   - name: created_by
   - name: result
+  - name: deadline
+    direction: desc
+
+- kind: GameModel
+  properties:
+  - name: created_by
+  - name: result
   - name: modified_time
 
 - kind: MessageModel
