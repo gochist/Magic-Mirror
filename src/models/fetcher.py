@@ -38,9 +38,17 @@ def set_game_result(game_id, option):
     
     return game
 
+def get_score_history(user):
+    scores = ScoreModel.all()\
+                       .filter('user =', user)\
+                       .order('created_time')
+    return scores          
 
 ###########################################
 # related on user operation
+
+def get_user_order_rank():
+    return UserModel.all().order('-final_score')
 
 def get_user_by(key, value):
     user = None
@@ -75,6 +83,19 @@ def set_user(twit_id, twit_screen_name, twit_img_url):
 
 ###########################################
 # related on game list
+def get_games_played_by(user):
+    """ return games which is playing by user 
+    """
+    games = []
+    maps = OptionUserMapModel.all()\
+                             .filter("user =", user)
+
+    if maps.count() > 0:
+        maps = maps.order("-modified_time")
+        games = [map.game for map in maps if map.game.result != -1]
+
+    return games
+
 def get_games_playing_by(user):
     """ return games which is playing by user 
     """
@@ -107,9 +128,34 @@ def get_games_hosted_by(user):
 
     return games
 
+def get_games_pending_by(user):
+    """ return games which is being hosted by user 
+    """
+    games = GameModel.all()\
+                     .filter("created_by =", user)\
+                     .filter("deadline <", datetime.utcnow())\
+                     .filter("result =", -1)
+                     
+    if games.count() > 0:
+        games = games.order("-modified_time")
+
+    return games
+
 def get_games_by_pageview():
     games = GameModel.all().order('-view')
     return games
+
+
+def delete_game(game_id):
+    game = GameModel.get_by_id(game_id)
+    for m in MessageModel.all().filter('game =',game):
+        m.delete()
+    for m in OptionUserMapModel.all().filter('game =',game):
+        m.delete()
+    for m in ScoreModel.all().filter('game =',game):
+        m.delete()
+    game.delete()    
+
 
 
 ###########################################
@@ -151,13 +197,3 @@ def check_session(sid, extend=True):
             session.put()
         
     return session
-
-def delete_game(game_id):
-    game = GameModel.get_by_id(game_id)
-    for m in MessageModel.all().filter('game =',game):
-        m.delete()
-    for m in OptionUserMapModel.all().filter('game =',game):
-        m.delete()
-    for m in ScoreModel.all().filter('game =',game):
-        m.delete()
-    game.delete()    

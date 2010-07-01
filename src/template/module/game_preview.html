@@ -1,5 +1,5 @@
 {% spaceless %}
-<ul class='game_list'>
+<li class='game_list'>
     <div class='game'>
         <img class='user_img' src='{{game.created_by.twit_img_url}}'>
         <div class='message'>
@@ -8,7 +8,7 @@
                 {{game.subject|escape}}
                 <br/>
                 <span class='deadline'>
-                    {{game.deadline|humantime}}
+                    {{game.deadline|humantime}}, {{game.view}} page hits
                 </span>
             </p>
             <div class='message_links'>
@@ -18,5 +18,5 @@
             </div>
         </div>
     </div>
-</ul>
+</li>
 {% endspaceless %}

@@ -1,0 +1,9 @@
+{% for user in users %}
+<div>
+    <img src='{{user.twit_img_url}}'>
+    <a>
+        <strong>{{user.twit_screen_name|homelink}}</strong>
+        ({{user.final_score}})
+    </a>
+</div>
+{% endfor %}

@@ -10,9 +10,14 @@
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js">
         </script>
         {% endif %}
-		{% if google_visualization %}
-		<script type="text/javascript" src="http://www.google.com/jsapi"></script>
-		{% endif %}
+        {% if charcounter %}
+        <script type='text/javascript' src='/static/js/jquery.charcounter.js'>
+        </script>
+        {% endif %}
+        {% if google_visualization %}
+        <script type="text/javascript" src="http://www.google.com/jsapi">
+        </script>
+        {% endif %}
     </head>
     <body>
         <div class='content_layout'>
@@ -25,7 +30,10 @@
                         Home
                     </a>
                     <a class='top_menu' href='/timeline'>
-                        Public Timeline
+                        Timeline
+                    </a>
+                    <a class='top_menu' href='/ranking'>
+                        Ranking
                     </a>
                     <a class='top_menu' href='/game/new'>
                         Post

@@ -24,7 +24,7 @@ this template is for MagicMirror game view page.
                 </div>
                 {% if session and intime%} 
                 <a class='small right' href='/{{game.key.id}}/{{forloop.counter0}}'>
-                    Join in
+                    join in
                 </a>
                 {% endif %} 
                 {% if session and not intime and not game.has_result %}
@@ -44,8 +44,8 @@ this template is for MagicMirror game view page.
             <h2 class='simple round'>{{session.user.twit_screen_name|title}}, what do you think about?</h2>
             <form action='/{{game.key.id}}/msg' method='post'>
                 <div class='blue round'>
-                    {% ifequal session.user.key.id game.created_by.key.id %} <textarea class='twitbox round3' name='message'>{{config.hosturl}}/{{game.key.id}} </textarea>
-                    {% else %}<textarea class='twitbox round3' name='message'>{{config.hosturl}}/{{game.key.id}} @{{game.created_by.twit_screen_name}} </textarea>
+                    {% ifequal session.user.key.id game.created_by.key.id %} <textarea  id='twitbox' class='twitbox round3' name='message'>{{config.hosturl}}/{{game.key.id}} </textarea>
+                    {% else %}<textarea id='twitbox' class='twitbox round3' name='message'>{{config.hosturl}}/{{game.key.id}} @{{game.created_by.twit_screen_name}} </textarea>
                     {% endifequal %}<input type="checkbox" name="tweet_it" checked="checked" value="tweet_it" /><strong>tweet it</strong>
                     <input type='submit'/>
                 </div>
@@ -59,7 +59,7 @@ this template is for MagicMirror game view page.
                 </div>
                 <p class='twit_text'>
                     <strong>{{message.user.twit_screen_name|homelink}}</strong>
-                    {{message.text|escape}}
+                    {{message.text|escape|urlize}}
                     <br/>
                     <span class='deadline'>
                         {{message.created_time|humantime}}

@@ -234,7 +234,7 @@ class GameResultHandler(BaseHandler):
             score = 0.0
             lost_score = 0.0
             
-        # set score TODO: make it as a transaction
+        # set score TODO: process it in a transaction
         for winner in winners:
             fetcher.set_score(winner, game_id, score)
 
@@ -344,6 +344,7 @@ class GameViewHandler(BaseHandler):
                          scores=scores,
                          google_visualization=True,
                          jquery=True,
+                         charcounter=True,
                          return_url_param=return_url_param,
                          config=config)
     
@@ -375,7 +376,15 @@ class GameViewHandler(BaseHandler):
             
             self.redirect('/%d' % game_id)
             return
-        
+
+class RankingHandler(BaseHandler):
+    def get(self):
+        session = self.get_vaild_session()
+        users = fetcher.get_user_order_rank()[:10]
+        self.render_page(main_module='rank.html',
+                         side_module='rank_side.html',
+                         session=session,
+                         users=users)        
             
 class GameHandler(BaseHandler):
     def validate_form(self, form):
@@ -474,27 +483,21 @@ class HomeHandler(BaseHandler):
                 return
             user = session.user
 
-        joined_games = ""
-        games = fetcher.get_games_playing_by(user)
-        joined_games = self.make_game_list(games)           
-
-        # hosted by me
-        hosted_games = ""
-        games = fetcher.get_games_hosted_by(user)
-                         
-        if games:
-            hosted_games = self.make_game_list(games)
+        joined_games = fetcher.get_games_playing_by(user)
+        played_games = fetcher.get_games_played_by(user)
+        hosted_games = fetcher.get_games_hosted_by(user)
+        pending_games = fetcher.get_games_pending_by(user)
         
-        scores = ScoreModel.all()\
-                           .filter('user =', user)\
-                           .order('created_time')
+        scores = fetcher.get_score_history(user)
         
         # render page
         self.render_page(main_module='user_home.html',
                          side_module='user_stats.html',
                          session=session,
-                         joined_games=joined_games,
-                         hosted_games=hosted_games,
+                         pending_games=pending_games[:5],
+                         joined_games=joined_games[:5],
+                         played_games=played_games[:5],
+                         hosted_games=hosted_games[:5],
                          scores=scores,
                          config=config,
                          google_visualization=True,

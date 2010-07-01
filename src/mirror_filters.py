@@ -1,6 +1,8 @@
 from google.appengine.ext.webapp import template 
 from datetime import datetime, timedelta
 from math import modf
+import config
+import os
 
 register = template.create_template_register() 
 
@@ -10,6 +12,15 @@ def humanround(value, threshold=0.8):
         return integer + 1
     else :
         return integer
+
+@register.filter
+def render_game_preview(game):
+    module_path = os.path.join(config.tpl_path, 'module', 'game_preview.html')
+    return template.render(module_path, {'game':game})
+
+@register.filter
+def count(listobj):
+    return str(len(listobj))
 
 @register.filter
 def homelink(twit_screen_name):

@@ -41,12 +41,16 @@ div.chart {
     margin: 0px;
     padding: 0px;
     border: none;
+    border-width: 0px;
+	background-color: #7bc4f1;
 }
 
 iframe {
     margin: 0px;
     padding: 0px;
     border: none;
+    border-width: 0px;
+	background-color: #7bc4f1;
 }
 
 h2.simple {
@@ -218,6 +222,16 @@ h2 {
     border: none;
 }
 
+.left {
+    float: left;
+    overflow: hidden;
+}
+
+.right {
+    float: left;
+    overflow: hidden;
+}
+
 h3 {
     background-color: #c0deed;
 }
@@ -236,6 +250,7 @@ div.message {
 div.message_links {
     float: right;
     overflow: hidden;
+    font-size: small;
 }
 
 div.game_view {
@@ -256,14 +271,6 @@ div.user_img {
     padding: 2px 1px 1px 1px;
     float: left;
     text-align: center;
-}
-
-div.user_img:hover {
-    padding: 1px 0px 0px 0px;
-    /*background-color: #b0cedd;*/
-    border: solid;
-    border-width: 1px;
-    border-color: #ff0000;
 }
 
 div.gamer_img_list {
@@ -295,9 +302,16 @@ p.twit_text {
     overflow: hidden;
 }
 
-ul.game_list {
+ul.game_ul {
+    margin: 0px;
+    padding: 0px;
+    list-style-type: none;
+}
+
+li.game_list {
     margin: auto;
     padding: 0px;
+    list-style-type: none;
 }
 
 h2 {

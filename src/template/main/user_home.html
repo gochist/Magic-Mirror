@@ -1,13 +1,50 @@
 {% spaceless %}
 <div>
-	{% if joined_games %}
-    <h2 class='space round'>Playing</h2>
-	{{joined_games}}
-	{% endif %}
+	<!-- pending game list -->
+    {% if pending_games.count %}<h2 class='space round'>Pending</h2>
+    <ul class='game_ul'>
+        {% for game in pending_games %}
+        {{game|render_game_preview}}
+        {% endfor %}
+    </ul>
+    {% endif %}
 	
-	{% if hosted_games %}
-    <h2 class='space round'>Hosting</h2>	
-	{{hosted_games}}
-	{% endif %}
+	<!-- hosting game list -->
+    {% if hosted_games.count %}
+	<h2 class='space round'>Hosting</h2>
+    <ul class='game_ul'>
+        {% for game in hosted_games %}
+        {{game|render_game_preview}}
+        {% endfor %}
+    </ul>
+    {% endif %}
+	
+	<!-- playing game list -->
+	
+    <h2 class='space round'>Playing</h2>
+    {% if joined_games %}
+    <ul class='game_ul'>
+        {% for game in joined_games %}
+        {{game|render_game_preview}}
+        {% endfor %}
+    </ul>
+    {% else %}
+    <div class='space'>
+        <p>
+            There's no game that you are playing.
+        </p>
+    </div>
+    {% endif %}
+	
+	<!-- played game list -->
+	
+    {% if played_games %}<h2 class='space round'>Played</h2>
+    <ul class='game_ul'>
+        {% for game in played_games %}
+        {{game|render_game_preview}}
+        {% endfor %}
+    </ul>
+    {% endif %}
+
 </div>
 {% endspaceless %}
