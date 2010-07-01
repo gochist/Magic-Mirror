@@ -344,7 +344,6 @@ class GameViewHandler(BaseHandler):
                          scores=scores,
                          google_visualization=True,
                          jquery=True,
-                         charcounter=True,
                          return_url_param=return_url_param,
                          config=config)
     
@@ -415,44 +414,72 @@ class GameHandler(BaseHandler):
                          user=user_info,
                          session=session,
                          jquery=True,
-                         timezone=tz_str)
+                         timezone=tz_str,
+                         subject=self.request.get('subject'),
+                         options=self.request.get('options'),
+                         due_date=self.request.get('due_date'),
+                         due_time=self.request.get('due_time'),
+                         error=self.request.get('error'))
 
     def post(self):
         session = self.get_vaild_session()
         if not session:
             self.redirect('/')
             return
-        
-        page_dict = {'subject' :self.request.get('subject').strip()}
-        page_dict['options'] = [line.strip() for line 
-                                             in self.request.get('option')\
-                                                            .strip()\
-                                                            .splitlines() 
-                                             if line]
+
         # get user information
         twit = self.get_twitapi(session)
         user_info = twit.GetUserInfo()
-                
-        # validate form
         if not user_info.utc_offset:
             user_info.utc_offset = 0         
         utc_offset = user_info.utc_offset
-        due_date = self.request.get('due_date')
-        due_time = self.request.get('due_time')
-        deadline = due_date + due_time
-        page_dict['deadline'] = utils.utc_time(deadline, utc_offset)
         
-        # pack data
-        
-        if not self.validate_form(page_dict):
-            self.redirect('/game/new')
+        # validate form
+        try :
+            error = ""
+            subject = self.request.get('subject').strip()
+            req_options = self.request.get('option').strip()
+            due_date = self.request.get('due_date')
+            due_time = self.request.get('due_time')
+
+            options = [line.strip() for line in req_options.splitlines() if line]
+
+            # subject required
+            if len(subject) < 5:
+                error = "subject"                
+                raise Exception
+            
+            # duplicated option 
+            if len(options) != len(set(options)):
+                error = "option"
+                raise Exception
+            
+            # need more than one 
+            if len(set(options)) < 2:
+                error = "option"
+                raise Exception
+            
+            # deadline should be future
+            deadline = due_date + due_time
+            deadline = utils.utc_time(deadline, utc_offset)
+            if deadline < datetime.datetime.utcnow():
+                error = "deadline"
+                raise Exception
+            
+        except Exception:
+            encoded_url = urllib.urlencode({'subject':subject,
+                                            'options':req_options,
+                                            'due_date':due_date,
+                                            'due_time':due_time,
+                                            'error':error})            
+            self.redirect('/game/new?' + encoded_url)
             return
         
         
         # insert game into DB
-        game = GameModel(subject=page_dict['subject'],
-                         options=page_dict['options'],
-                         deadline=page_dict['deadline'],
+        game = GameModel(subject=subject,
+                         options=options,
+                         deadline=deadline,
                          created_by=session.user,
                          result= -1)
         game.put()
