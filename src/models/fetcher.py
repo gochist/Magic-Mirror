@@ -9,7 +9,7 @@ def get_gamer_list(game_id, option=None, invert=False):
     maps = OptionUserMapModel.all()\
                              .filter('game =', game)
     
-    if option:
+    if option == None:
         if invert:
             return [map.user for map in maps 
                     if map.option_no != option]
