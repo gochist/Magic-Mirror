@@ -7,9 +7,6 @@
     });
     
     $(document).ready(function(){
-        $("#sub_area").text("MM/DD, A(ABC) vs B(XYZ), Which will be the winner of the game?");
-        $("#opt_area").text("Draw\rA\rB");
-        
         $("button.template_sports").click(function(event){
             $("#sub_area").text("MM/DD, A(ABC) vs B(XYZ), Which will be the winner of the game?");
             $("#opt_area").text("Draw\rA\rB");
@@ -25,6 +22,8 @@
     });
 </script>
 <div>
+    <div id= 'msg'>
+    </div>
     <h2 class='space round'>Issue a game</h2>
     <div>
         <h3 class='space round'>Use Template</h3>
@@ -35,7 +34,7 @@
             Soccer Game
         </button>
         <button class='template_1stbirth'>
-			돌잡이 이벤트
+            돌잡이 이벤트
         </button>
     </div>
     <form method='post' action='/game'>
@@ -48,7 +47,7 @@
         <div>
             <h3 class='space round {%ifequal error "option"%}pink-back{% endifequal %}'>Options</h3>
             <div id='options'>
-                <textarea id='opt_area' class='twitbox round3' rows='5' name='option'>{% endspaceless %}{{options}}{%spaceless%}</textarea>
+                <textarea id='opt_area' class='twitbox round3' rows='5' name='option'>{% endspaceless %}{% if options %}{{options}}{% else %}Snow White&#13;Queen{% endif %}{%spaceless%}</textarea>
             </div>
         </div>
         <div>
