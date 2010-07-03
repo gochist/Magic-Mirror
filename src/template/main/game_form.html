@@ -5,20 +5,50 @@
             minDate: 0
         });
     });
+    
+    $(document).ready(function(){
+        $("#sub_area").text("MM/DD, A(ABC) vs B(XYZ), Which will be the winner of the game?");
+        $("#opt_area").text("Draw\rA\rB");
+        
+        $("button.template_sports").click(function(event){
+            $("#sub_area").text("MM/DD, A(ABC) vs B(XYZ), Which will be the winner of the game?");
+            $("#opt_area").text("Draw\rA\rB");
+        });
+        $("button.template_soccer").click(function(event){
+            $("#sub_area").text("MM/DD, A(FC ABC) vs B(FC XYZ), Which team will be the winner of this game?");
+            $("#opt_area").text("Draw\rA, by 1 goal\rA, by 2 goals\rA, by 3 goals\rA, by more 4 goals\rB, by 1 goal\rB, by 2 goals\rB, by 3 goals\rB, by more 4 goals");
+        });
+        $("button.template_1stbirth").click(function(event){
+            $("#sub_area").text("MM/DD 우리 사랑스러운 길동이는 돌잡이로 무엇을 선택할까요?");
+            $("#opt_area").text("돈\r실\r쌀\r붓(연필)\r마이크\r마우스\r골프공\r청진기\r판사봉\r기타");
+        });
+    });
 </script>
 <div>
+    <h2 class='space round'>Issue a game</h2>
+    <div>
+        <h3 class='space round'>Use Template</h3>
+        <button class='template_sports'>
+            Simple Sports
+        </button>
+        <button class='template_soccer'>
+            Soccer Game
+        </button>
+        <button class='template_1stbirth'>
+			돌잡이 이벤트
+        </button>
+    </div>
     <form method='post' action='/game'>
-        <h2 class='space round'>Issue a game</h2>
         <div>
             <h3 class='space round {%ifequal error "subject"%}pink-back{% endifequal %}'>Subject</h3>
             <div>
-                <textarea class='twitbox round3' autocomplete="off" rows="2" name='subject'>{% if subject %}{{subject|escape}}{% else %}Mirror, mirror on the wall, Who is the fairest fair of all?{% endif %}</textarea>
+                <textarea id='sub_area' class='twitbox round3' autocomplete="off" rows="2" name='subject'>{% if subject %}{{subject|escape}}{% else %}Mirror, mirror on the wall, Who is the fairest fair of all?{% endif %}</textarea>
             </div>
         </div>
         <div>
             <h3 class='space round {%ifequal error "option"%}pink-back{% endifequal %}'>Options</h3>
             <div id='options'>
-                <textarea class='twitbox round3' rows='5' name='option'>{% endspaceless %}{{options}}{%spaceless%}</textarea>
+                <textarea id='opt_area' class='twitbox round3' rows='5' name='option'>{% endspaceless %}{{options}}{%spaceless%}</textarea>
             </div>
         </div>
         <div>

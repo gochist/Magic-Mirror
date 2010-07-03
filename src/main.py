@@ -19,6 +19,7 @@ def main():
                    ('/oauth/twitter/callback', TwitCallbackHandler),
                    ('/game/(new)', GameHandler),
                    ('/game', GameHandler),
+                   ('/error',ErrorHandler),
                    ('/ranking', RankingHandler),
                    ('/timeline', TimelineHandler),
                    ('/temp', TestHandler),

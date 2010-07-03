@@ -9,7 +9,7 @@ def get_gamer_list(game_id, option=None, invert=False):
     maps = OptionUserMapModel.all()\
                              .filter('game =', game)
     
-    if option == None:
+    if option != None:
         if invert:
             return [map.user for map in maps 
                     if map.option_no != option]
@@ -193,9 +193,9 @@ def check_session(sid, extend=True):
         session = None
         
     if session:
-        if datetime.utcnow() - session.modified > config.session_life:
-            return None
-        elif extend:
+        if extend:
             session.put()
+#        if datetime.utcnow() - session.modified > config.session_life:
+#            return None
         
     return session

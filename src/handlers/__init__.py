@@ -105,6 +105,13 @@ class BaseHandler(webapp.RequestHandler):
             ret += self.render_module("game_preview.html", game=game)
         
         return ret
+
+    def redirect_error(self, return_url="/", msg=""):
+        params = {'return_url': return_url,
+                  'msg':msg}
+        params = urllib.urlencode(params)
+        self.redirect('/error?' + params)
+
         
 
 class TwitSigninHandler(BaseHandler):
@@ -119,7 +126,7 @@ class TwitSigninHandler(BaseHandler):
         try:
             req_token = twit.getRequestToken()
         except DownloadError:
-            self.redirect("/?msg=error")
+            self.redirect_error(msg="twitter is over capacity")
             return
         
         # return url control
@@ -160,7 +167,7 @@ class TwitCallbackHandler(BaseHandler):
         try:
             access_token = twit.getAccessToken()
         except DownloadError:
-            self.redirect("/?msg=error")
+            self.redirect_error(msg="twitter is over capacity")
             return
             
         token = access_token.key
@@ -171,11 +178,11 @@ class TwitCallbackHandler(BaseHandler):
         # get user info 
         try:
             twit = OAuthApi(access_token=access_token)
+            user = twit.GetUserInfo()
         except DownloadError:
-            self.redirect("/?msg=error")
+            self.redirect_error(msg="twitter is over capacity")
             return
         
-        user = twit.GetUserInfo()
 
         # add user 
         user_model = fetcher.set_user(twit_id=str(user.id),
@@ -370,9 +377,14 @@ class GameViewHandler(BaseHandler):
             logging.info(tweet_it)
             
             if tweet_it:
-                twit = self.get_twitapi(session)
-                ret = twit.PostUpdate(message.text)
-            
+                try:
+                    twit = self.get_twitapi(session)
+                    ret = twit.PostUpdate(message.text)
+                except DownloadError:
+                    self.redirect_error(msg="Twitter is over capacity.",
+                                        return_url="%s" % game_id)
+                    return
+           
             self.redirect('/%d' % game_id)
             return
 
@@ -384,6 +396,20 @@ class RankingHandler(BaseHandler):
                          side_module='rank_side.html',
                          session=session,
                          users=users)        
+
+class ErrorHandler(BaseHandler):
+    def get(self):
+        session = self.get_vaild_session()
+        error_no = self.request.get('error_no')
+        msg = self.request.get('msg')
+        return_url = self.request.get('return_url') or "/"
+        
+        self.render_page(main_module='error.html',
+                         side_module='rank_side.html',
+                         msg=msg,
+                         return_url=return_url,
+                         session=session)
+        
             
 class GameHandler(BaseHandler):
     def validate_form(self, form):
@@ -397,9 +423,13 @@ class GameHandler(BaseHandler):
             return
             
         # get user information
-        twit = self.get_twitapi(session)
-        user_info = twit.GetUserInfo()
-        
+        try:
+            twit = self.get_twitapi(session)
+            user_info = twit.GetUserInfo()
+        except DownloadError:
+            self.redirect_error(msg="Twitter is over capacity.")
+            return
+
         if not user_info.utc_offset:
             user_info.utc_offset = 0
         if not user_info.time_zone :
@@ -428,8 +458,13 @@ class GameHandler(BaseHandler):
             return
 
         # get user information
-        twit = self.get_twitapi(session)
-        user_info = twit.GetUserInfo()
+        try:
+            twit = self.get_twitapi(session)
+            user_info = twit.GetUserInfo()
+        except DownloadError:
+            self.redirect_error(msg="Twitter is over capacity.")
+            return
+        
         if not user_info.utc_offset:
             user_info.utc_offset = 0         
         utc_offset = user_info.utc_offset
@@ -489,8 +524,12 @@ class GameHandler(BaseHandler):
         if tweet_it:
             url = config.hosturl + "/" + str(game.key().id())
             msg = game.subject[:135 - len(url)] + " " + url
-            twit = self.get_twitapi(session)
-            twit.PostUpdate(msg)
+            try:
+                twit = self.get_twitapi(session)
+                twit.PostUpdate(msg)
+            except DownloadError:
+                self.redirect_error(msg="Twitter is over capacity.")
+                return
             
             logging.info("twit this! " + msg)
             
