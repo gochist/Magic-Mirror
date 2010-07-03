@@ -37,12 +37,19 @@ a.homelink:hover {
 a.homelink:visited {
 }
 
+div.homelink_overlay {
+    position: absolute;
+    border: solid;
+    border-width: 1px;
+    background-color: #ffffcc;
+}
+
 div.chart {
     margin: 0px;
     padding: 0px;
     border: none;
     border-width: 0px;
-	background-color: #7bc4f1;
+    background-color: #7bc4f1;
 }
 
 iframe {
@@ -50,7 +57,7 @@ iframe {
     padding: 0px;
     border: none;
     border-width: 0px;
-	background-color: #7bc4f1;
+    background-color: #7bc4f1;
 }
 
 h2.simple {

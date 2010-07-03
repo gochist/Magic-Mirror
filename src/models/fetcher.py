@@ -52,10 +52,12 @@ def get_user_order_rank():
 
 def get_user_by(key, value):
     user = None
-    query = UserModel.all().filter("%s =" % key, value)
     
-    if query.count > 0 :
+    try:
+        query = UserModel.all().filter("%s =" % key, value)
         user = query.fetch(1)[0]
+    except Exception:
+        pass
     
     return user
 

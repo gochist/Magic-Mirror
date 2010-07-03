@@ -10,6 +10,7 @@ from oauthtwitter import OAuthApi
 import oauth
 import utils
 import urllib
+from django.utils import simplejson
 
 class BaseHandler(webapp.RequestHandler):
     # cookie related functions
@@ -410,6 +411,19 @@ class ErrorHandler(BaseHandler):
                          return_url=return_url,
                          session=session)
         
+class UserHandler(BaseHandler):
+    def get(self, twit_screen_name):
+        user = fetcher.get_user_by_twit_screen_name(twit_screen_name)
+        if user:
+            jsonuser = {'error': False,
+                        'screen_name': user.twit_screen_name,
+                        'img_url': user.twit_img_url,
+                        'final_score': user.final_score}
+        else:
+            jsonuser = {'error': True}
+            
+        self.response.out.write(simplejson.dumps(jsonuser))
+              
             
 class GameHandler(BaseHandler):
     def validate_form(self, form):

@@ -10,37 +10,34 @@
     </p>
     {% endifequal %}
     <script type='text/javascript'>
-                                        google.load('visualization', '1', {
-                                            'packages': ['corechart']
-                                        });
-                                        
-                                        google.setOnLoadCallback(drawChart);
-                                        
-                                        function drawChart(){
-                                        
-                                            // Create our data table.
-                                            var data = new google.visualization.DataTable();
-                                            data.addColumn('string', 'Option');
-                                            data.addColumn('number', 'Persons joined in');
-                                            data.addRows([
-                                			{% for option in option_game_map %}['{{option.0}}', {{option.1.count}}]
-                							{% if not forloop.last %},{% endif %}
-                							{% endfor %}
-                                			]);
-                                            
-                                            // Instantiate and draw our chart, passing in some options.
-                                            var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-                                            chart.draw(data, {
-                                                width: 200,
-                                                height: 200,
-                                                is3D: true,
-                                                backgroundColor: '#7bc4f1',
-                                                legend: 'none'
-                                            });
-                                        }
-                                    
-                            
+        	
+                google.load('visualization', '1', {
+                    'packages': ['corechart']
+                });
+                google.setOnLoadCallback(drawChart);
+        		
+               function drawChart(){
                     
+                        // Create our data table.
+                        var data = new google.visualization.DataTable();
+                        data.addColumn('string', 'Option');
+                        data.addColumn('number', 'Persons joined in');
+                        data.addRows([
+            			{% for option in option_game_map %}['{{option.0}}', {{option.1.count}}]
+        				{% if not forloop.last %},{% endif %}
+        				{% endfor %}
+            			]);
+                        
+                        // Instantiate and draw our chart, passing in some options.
+                        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+                        chart.draw(data, {
+                            width: 200,
+                            height: 200,
+                            is3D: true,
+                            backgroundColor: '#7bc4f1',
+                            legend: 'none'
+                        });
+                    }
             
     </script>
     <p>

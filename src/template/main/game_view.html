@@ -2,19 +2,46 @@
 {% comment %}
 this template is for MagicMirror game view page.
 {% endcomment %}
+<script type='text/javascript'>
+    $(document).ready(function(){
+        $("div.user_img").hover(function(){
+            var name = $('#screen_name', this).val();
+            var text = "<div class='homelink_overlay space round'></div>";
+            $(this).append(text);
+            
+            $.ajax({
+                type: 'GET',
+                url: '/user/' + name + ".json",
+                dataType: 'json',
+                context: $(this),
+                success: function(json, textStatus){
+                    score = "score: <strong>" + json.final_score + "</strong>";
+                    $('.homelink_overlay', this).append(score);
+                },
+                error: function(xhr, textStatus, errorThrown){
+                
+                }
+            })
+            
+        }, function(){
+            $(this).find("div:last").remove();
+        });
+    });
+</script>
 <div>
     <div class='game_view round'>
-        <h2 class='space round'>{{game.subject|escape}} </h2>
+        <!-- subject --><h2 class='space round'>{{game.subject|escape}} </h2>
+        <!-- options -->
         <ul class='option'>
             {% for option_game in option_game_map %}
             <li class='gamer_list round'>
-                {% ifequal game.result option_game.2 %}<h3 class='space round pink-back'><strong>* {{option_game.0|escape}}</strong></h3>
+                <!-- each option -->{% ifequal game.result option_game.2 %}<h3 class='space round pink-back'><strong>* {{option_game.0|escape}}</strong></h3>
                 {% else %}<h3 class='space round'><strong>{{option_game.0|escape}}</strong></h3>
-                {% endifequal %}
+                {% endifequal %}<!-- gamer -->
                 <div class='gamer_img_list'>
                     {% for gamer in option_game.1 %}
                     <div class='user_img'>
-                        <img class='user_img2' src='{{gamer.user.twit_img_url}}'>
+                        <input id='screen_name' type='hidden' value='{{gamer.user.twit_screen_name}}'><img class='user_img2' src='{{gamer.user.twit_img_url}}'>
                         <br/>
                         <span class='img_text'>
                             {{gamer.user.twit_screen_name|homelink}}
@@ -38,20 +65,23 @@ this template is for MagicMirror game view page.
             {% endfor %}
         </ul>
     </div>
+    <!-- messages -->
     <div class='messages'>
-        {% if session %}
+        {% if session %}<!-- message input form -->
         <div class='post_twit round'>
             <h2 class='simple round'>{{session.user.twit_screen_name|title}}, what do you think about?</h2>
             <form action='/{{game.key.id}}/msg' method='post'>
                 <div class='blue round'>
-                    {% ifequal session.user.key.id game.created_by.key.id %} <textarea  id='twitbox' class='twitbox round3' name='message'>{{config.hosturl}}/{{game.key.id}} </textarea>
+                    {% ifequal session.user.key.id game.created_by.key.id %} <textarea id='twitbox' class='twitbox round3' name='message'>{{config.hosturl}}/{{game.key.id}} </textarea>
                     {% else %}<textarea id='twitbox' class='twitbox round3' name='message'>{{config.hosturl}}/{{game.key.id}} @{{game.created_by.twit_screen_name}} </textarea>
                     {% endifequal %}<input type="checkbox" name="tweet_it" checked="checked" value="tweet_it" /><strong>tweet it</strong>
                     <input type='submit'/>
                 </div>
             </form>
-        </div>{% endif %}
-        {% for message in messages %}
+        </div>{% else %}
+        {% if messages.count %}<h2 class='simple round'>Mirrors think</h2>
+        {% endif %}
+        {% endif %}<!-- messages --> {% for message in messages %}
         <div class='message_list'>
             <div class='game'>
                 <div>
