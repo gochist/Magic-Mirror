@@ -38,7 +38,7 @@ a.homelink:visited {
 }
 
 div.homelink_overlay {
-    position: fixed;
+    position: absolute;
     border: solid;
     border-color: #aaaaaa;
     border-width: 3px;
