@@ -41,6 +41,8 @@ div.homelink_overlay {
     position: absolute;
     border: solid;
     border-width: 1px;
+    margin-top: -6px;
+    margin-left: -66px;
     background-color: #ffffcc;
 }
 
