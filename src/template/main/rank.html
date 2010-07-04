@@ -1,10 +1,14 @@
 <h2 class='space round'>Top 10</h2>
-{% for user in users %}
-<div class='popup'>
-    <img class='user_img' src='{{user.twit_img_url}}'>
-    <p>
-        {{user.twit_screen_name|homelink}}
-        ({{user.final_score}})
-    </p>
-</div>
-{% endfor %}
+<ul class='game_ul'>
+    {% for user in users %}
+    <li class='game_list'>
+        <img class='user_img' src='{{user.twit_img_url}}'>
+        <div class='message'>
+            <p>
+                {{user.twit_screen_name|homelink}}
+                ({{user.final_score}})
+            </p>
+        </div>
+    </li>
+    {% endfor %}
+</ul>

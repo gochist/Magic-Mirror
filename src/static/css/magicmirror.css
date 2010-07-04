@@ -39,7 +39,6 @@ a.homelink:visited {
 
 div.homelink_overlay {
     position: fixed;
-    margin-top: 15px;
     border: solid;
     border-color: #aaaaaa;
     border-width: 3px;
