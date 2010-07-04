@@ -9,10 +9,13 @@ var init = function(){
             dataType: 'json',
             context: $(this),
             success: function(json, textStatus){
-                img = "<img src='" + json.img_url + "'>";
-                score = "score: <strong>" + json.final_score + "</strong>";
+                var twit_url = "http://twitter.com/" + json.screen_name;
+                name = json.name + "<br/>";
+                scr_name = "<a href='" + twit_url + "'>@" + json.screen_name + "</a><br/>"
+                img = "<img class='user_img' src='" + json.img_url + "'>";
+                score = "score: " + json.final_score + "<br/>";
                 $('.homelink_overlay', this).text("");
-                $('.homelink_overlay', this).append(img + score);
+                $('.homelink_overlay', this).append(img + name + scr_name + score);
             },
             error: function(xhr, textStatus, errorThrown){
             

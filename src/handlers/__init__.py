@@ -187,6 +187,7 @@ class TwitCallbackHandler(BaseHandler):
 
         # add user 
         user_model = fetcher.set_user(twit_id=str(user.id),
+                                      twit_name=user.name,
                                       twit_screen_name=user.screen_name,
                                       twit_img_url=user.profile_image_url)
         
@@ -418,6 +419,7 @@ class UserHandler(BaseHandler):
             jsonuser = {'error': False,
                         'screen_name': user.twit_screen_name,
                         'img_url': user.twit_img_url,
+                        'name' : user.twit_name,
                         'final_score': user.final_score}
         else:
             jsonuser = {'error': True}

@@ -38,12 +38,13 @@ a.homelink:visited {
 }
 
 div.homelink_overlay {
-    position: absolute;
+    position: fixed;
+    margin-top: 15px;
     border: solid;
-    border-width: 1px;
-    margin-top: -6px;
-    margin-left: -66px;
+    border-color: #aaaaaa;
+    border-width: 3px;
     background-color: #ffffcc;
+    font-size: small;
 }
 
 div.chart {

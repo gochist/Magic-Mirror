@@ -65,17 +65,19 @@ def get_user_by_twitid(twit_id):
     return get_user_by("twit_id", twit_id)
 
 def get_user_by_twit_screen_name(twit_screen_name):
-    return get_user_by("twit_screen_name", 
+    return get_user_by("twit_screen_name",
                        twit_screen_name)
 
-def set_user(twit_id, twit_screen_name, twit_img_url):
+def set_user(twit_id, twit_name, twit_screen_name, twit_img_url):
     user = get_user_by_twitid(twit_id)
     if user:
         user.twit_id = twit_id
+        user.twit_name = twit_name
         user.twit_screen_name = twit_screen_name
         user.twit_img_url = twit_img_url
     else:
         user = UserModel(twit_id=twit_id,
+                         twit_name=twit_name,
                          twit_screen_name=twit_screen_name,
                          twit_img_url=twit_img_url)
 
@@ -152,11 +154,11 @@ def get_games_by_pageview():
 
 def delete_game(game_id):
     game = GameModel.get_by_id(game_id)
-    for m in MessageModel.all().filter('game =',game):
+    for m in MessageModel.all().filter('game =', game):
         m.delete()
-    for m in OptionUserMapModel.all().filter('game =',game):
+    for m in OptionUserMapModel.all().filter('game =', game):
         m.delete()
-    for m in ScoreModel.all().filter('game =',game):
+    for m in ScoreModel.all().filter('game =', game):
         m.delete()
     game.delete()    
 

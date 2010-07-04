@@ -8,6 +8,7 @@ class UserModel(db.Model):
     created = db.DateTimeProperty(auto_now_add=True)
     modified = db.DateTimeProperty(auto_now=True)
     final_score = db.FloatProperty(default=0.0)
+    twit_name = db.StringProperty(default='')
 
 class OAuthRequestToken(db.Model):
     token = db.StringProperty()
