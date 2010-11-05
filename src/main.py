@@ -23,9 +23,9 @@ def main():
                    ('/error', ErrorHandler),
                    ('/ranking', RankingHandler),
                    ('/timeline', TimelineHandler),
-                   ('/temp', TestHandler),
+#                   ('/temp', TestHandler),
                    ]
-    application = webapp.WSGIApplication(url_mapping, debug=True)
+    application = webapp.WSGIApplication(url_mapping, debug=False)
     run_wsgi_app(application)
 
 if __name__ == "__main__":
