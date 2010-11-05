@@ -1,0 +1,10 @@
+from datetime import timedelta
+
+tpl_path = "template"
+twit_consumer_key = "" 
+twit_secret = ""
+hosturl = "http://gochimm.appspot.com"
+
+# TODO: session life check
+session_life = timedelta(seconds=60 * 20) # 20 minutes
+
