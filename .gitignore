@@ -1,4 +1,7 @@
 .setting
+.settings/
+.project
+.pydevproject
 *.pyc
 *.*~
 src/config.py
